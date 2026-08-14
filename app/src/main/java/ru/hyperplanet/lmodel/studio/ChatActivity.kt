@@ -14,6 +14,8 @@ import ru.hyperplanet.lmodel.studio.data.AppDatabase
 import ru.hyperplanet.lmodel.studio.data.Chat
 import ru.hyperplanet.lmodel.studio.data.Message
 import ru.hyperplanet.lmodel.studio.databinding.ActivityChatBinding
+import ru.hyperplanet.lmodel.studio.ml.InferenceEngine
+import ru.hyperplanet.lmodel.studio.util.CodingLangStore
 import ru.hyperplanet.lmodel.studio.ml.LanguageLock
 import ru.hyperplanet.lmodel.studio.ml.ModelTrainingSync
 
@@ -79,7 +81,7 @@ class ChatActivity : AppCompatActivity() {
                 val params = model?.let {
                     db.modelParameterDao().getForModel(it.id).associate { p -> p.key.lowercase() to p.value }
                 } ?: emptyMap()
-                InferenceEngine.generateResponse(model?.trainedDataJson, loadedChat.systemPrompt, text, params, history, lock)
+                InferenceEngine.generateResponse(model?.trainedDataJson, loadedChat.systemPrompt, text, params, history, lock, CodingLangStore.get(this@ChatActivity, loadedChat.modelId).map { it.names })
             }
             db.messageDao().insert(Message(chatId = chatId, isUser = false, text = result.text,
                 reasoning = result.reasoning, promptTokens = result.promptTokens, completionTokens = result.completionTokens))

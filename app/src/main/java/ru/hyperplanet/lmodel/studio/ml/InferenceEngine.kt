@@ -32,7 +32,8 @@ object InferenceEngine {
         userMessage: String,
         parameters: Map<String, String> = emptyMap(),
         history: List<HistoryMessage> = emptyList(),
-        lockedLanguage: String? = null
+        lockedLanguage: String? = null,
+        languageNameGroups: List<List<String>> = emptyList()
     ): GenerationResult {
         val promptTokens = countTokens(systemPrompt) + countTokens(userMessage) +
                 history.takeLast(8).sumOf { countTokens(it.text) }
@@ -118,54 +119,43 @@ object InferenceEngine {
             return GenerationResult(ans, reason, promptTokens, countTokens(ans))
         }
 
+        val analysis = QuestionUnderstanding.analyze(userMessage, languageNameGroups)
         val terms = MarkovTrainer.tokenizeText(userMessage).filter { it.length >= 2 && it !in STOP }
         val facts = retrieve(data, terms, maxOf(topK, 5), temperature)
-        if (facts.isEmpty()) {
-            val ans = if (en) "No relevant knowledge found."
-            else "В знаниях нет близких фрагментов."
-            val reason = buildMetaReasoning(
-                userMessage, en,
-                knowledgeNotes = emptyList(),
-                plan = if (en) listOf("Search knowledge", "Admit nothing relevant")
-                else listOf("Искать в знаниях", "Честно сказать, что близкого нет")
-            )
-            return GenerationResult(ans, reason, promptTokens, countTokens(ans))
-        }
 
-        // --- Reasoning: meta + knowledge as NOTES (not final prose) ---
         val notes = facts.take(min(5, facts.size)).map { it.first.trim() }
-        val brief = listOf("кратко", "короче", "brief", "short").any { lower.contains(it) }
-        val detailed = listOf("подробно", "развёрнуто", "детально", "explain", "подробн").any { lower.contains(it) }
-        val plan = when {
-            brief && en -> listOf("Give a short definition", "One example max", "Stop")
-            brief -> listOf("Короткое определение", "Максимум один пример", "Без воды")
-            detailed && en -> listOf("Clear definition", "Metaphor or example", "Key details", "Short wrap-up")
-            detailed -> listOf("Ясное определение", "Метафора или пример", "Важные детали", "Краткий итог")
-            en -> listOf("Definition first", "Main points from knowledge", "Simple language")
-            else -> listOf("Сначала определение", "Главное из знаний", "Простым языком")
-        }
+        val plan = if (en) {
+            listOf(analysis.summaryEn, "Generate words from training conditioned on the question")
+        } else {
+            listOf(analysis.summaryRu, "Сгенерировать слова из обучения с опорой на вопрос")
+        } + (analysis.preferredLangName?.let {
+            listOf(if (en) "Use the name «$it» for this language" else "В ответе использовать имя языка «$it»")
+        } ?: emptyList())
         val reasoning = buildMetaReasoning(userMessage, en, notes, plan)
 
-        // --- Answer: different assembly — user-facing, not a copy of reasoning ---
-        val takeN = when {
-            brief -> 1
-            detailed || temperature >= 1.2f -> min(topK.coerceAtLeast(3), facts.size)
-            temperature >= 0.8f -> min(3, facts.size)
-            else -> min(2, facts.size)
+        val genWords = when {
+            analysis.wantsShort -> minOf(maxWords, 24)
+            analysis.wantsDetailed -> maxWords
+            analysis.intent == QuestionUnderstanding.Intent.YES_NO -> minOf(maxWords, 20)
+            analysis.intent == QuestionUnderstanding.Intent.GREETING -> minOf(maxWords, 12)
+            else -> maxWords
         }
-        val selected = facts.take(takeN)
-        val sb = StringBuilder()
-        var words = 0
-        selected.forEachIndexed { i, (text, _) ->
-            val piece = text.trim().trimEnd('.', '!', '?')
-            val add = countTokens(piece)
-            if (words + add > maxWords && sb.isNotEmpty()) return@forEachIndexed
-            if (i == 0) sb.append(piece.replaceFirstChar { it.titlecase() })
-            else sb.append(' ').append(piece.replaceFirstChar { it.lowercase() })
-            if (!piece.endsWith('.')) sb.append('.')
-            words += add
+
+        // Генерация текста (не RAG-склейка)
+        var seedMsg = userMessage
+        analysis.preferredLangName?.let { pref ->
+            seedMsg = "$userMessage $pref"
         }
-        val answer = styleResponse(sb.toString().trim(), userMessage, maxWords)
+        var answer = TextGenerator.generate(data, seedMsg, genWords, temperature)
+        if (answer.isBlank()) {
+            answer = facts.firstOrNull()?.first?.trim().orEmpty()
+            if (answer.isBlank()) {
+                answer = if (en) "Not enough training patterns to generate yet. Add more texts and retrain."
+                else "Мало выученных связей для генерации. Добавьте тексты и переобучите модель."
+            }
+        }
+        // Модель «пользуется» Markdown в ответе, когда это уместно
+        answer = AnswerFormatter.format(answer, analysis, analysis.preferredLangName)
         return GenerationResult(answer, reasoning, promptTokens, countTokens(answer))
     }
 

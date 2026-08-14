@@ -13,6 +13,7 @@ import ru.hyperplanet.lmodel.studio.data.AppDatabase
 import ru.hyperplanet.lmodel.studio.data.TrainingItem
 import ru.hyperplanet.lmodel.studio.util.PersistentMediaStorage
 import ru.hyperplanet.lmodel.studio.databinding.ActivityPrologTrainBinding
+import ru.hyperplanet.lmodel.studio.ml.InferenceEngine
 import ru.hyperplanet.lmodel.studio.ml.MarkovTrainer
 import ru.hyperplanet.lmodel.studio.ml.PrologCompiler
 import ru.hyperplanet.lmodel.studio.ml.ModelTrainingSync

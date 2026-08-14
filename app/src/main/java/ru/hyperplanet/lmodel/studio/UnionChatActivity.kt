@@ -16,6 +16,7 @@ import ru.hyperplanet.lmodel.studio.data.AppDatabase
 import ru.hyperplanet.lmodel.studio.data.ModelUnion
 import ru.hyperplanet.lmodel.studio.data.UnionMessage
 import ru.hyperplanet.lmodel.studio.databinding.ActivityUnionChatBinding
+import ru.hyperplanet.lmodel.studio.ml.InferenceEngine
 import ru.hyperplanet.lmodel.studio.ml.ModelTrainingSync
 
 class UnionChatActivity : AppCompatActivity() {
