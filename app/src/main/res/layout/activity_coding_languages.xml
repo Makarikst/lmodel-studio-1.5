@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+    android:padding="16dp">
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="Языки для обучения кодингу"
+        android:textColor="@color/text_primary" android:textSize="18sp" android:textStyle="bold"/>
+    <TextView android:id="@+id/tvLangCount" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="4dp" android:textColor="@color/text_secondary"/>
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="«Добавить язык» — один язык с до 10 названиями. Долгое нажатие по строке — удалить язык."
+        android:textColor="@color/text_hint" android:textSize="12sp"/>
+    <EditText android:id="@+id/etLanguageName" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="12dp" android:background="@drawable/bg_card"
+        android:hint="Список языков ниже. Добавление — кнопкой." android:inputType="text"
+        android:padding="12dp" android:textColor="@color/text_primary" android:textColorHint="@color/text_hint"/>
+    <com.google.android.material.button.MaterialButton android:id="@+id/btnAddLanguage"
+        android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp"
+        android:text="Добавить язык" android:textAllCaps="false"
+        app:backgroundTint="@color/purple_500" app:cornerRadius="12dp"/>
+    <ListView android:id="@+id/listLanguages" android:layout_width="match_parent" android:layout_height="0dp"
+        android:layout_marginTop="12dp" android:layout_weight="1" android:dividerHeight="1dp"/>
+    <com.google.android.material.button.MaterialButton android:id="@+id/btnSaveLanguages"
+        android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp"
+        android:text="Сохранить и открыть обучение" android:textAllCaps="false"
+        app:backgroundTint="@color/purple_700" app:cornerRadius="12dp"/>
+</LinearLayout>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="ru.hyperplanet.lmodel.studio">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+    <application
+        android:name=".LModelApp"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.LModelStudio"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="true">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".NewChatActivity" android:exported="false" android:label="@string/title_new_chat" />
+        <activity android:name=".ChatActivity" android:exported="false" />
+        <activity android:name=".ModelEditorActivity" android:exported="false" />
+        <activity android:name=".TrainModelActivity" android:exported="false" android:label="@string/title_train_model" />
+        <activity android:name=".DevModeActivity" android:exported="false" android:label="@string/title_dev_mode" />
+        <activity android:name=".SecretEasterActivity" android:exported="false" android:theme="@style/Theme.LModelStudio" />
+            <activity android:name=".RagBotEditorActivity" android:exported="false"/>
+            <activity android:name=".RagBotListActivity" android:exported="false"/>
+            <activity android:name=".CodingLanguagesActivity" android:exported="false" android:label="@string/title_coding_languages"/>
+            <activity android:name=".CodingTrainActivity" android:exported="false" android:label="@string/title_coding_train"/>
+            <activity android:name=".MarkdownTrainActivity" android:exported="false" android:label="@string/title_markdown_train"/>
+            <activity android:name=".PrologTrainActivity" android:exported="false"/>
+            <activity android:name=".NewUnionActivity" android:exported="false"/>
+            <activity android:name=".UnionChatActivity" android:exported="false"/>
+    </application>
+</manifest>

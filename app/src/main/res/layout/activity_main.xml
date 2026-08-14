@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/background" android:fillViewport="true">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:padding="16dp">
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="@string/label_actions" android:textColor="@color/text_secondary" android:textStyle="bold"/>
+
+        <com.google.android.material.button.MaterialButton android:id="@+id/btnNewModel"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp"
+            android:text="@string/btn_new_model" android:textAllCaps="false" android:textColor="@color/text_on_dark"
+            app:backgroundTint="@color/purple_500" app:cornerRadius="12dp"/>
+
+        <com.google.android.material.button.MaterialButton android:id="@+id/btnNewChat"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp"
+            android:text="@string/btn_new_chat" android:textAllCaps="false" android:textColor="@color/text_on_dark"
+            app:backgroundTint="@color/purple_700" app:cornerRadius="12dp"/>
+
+        <com.google.android.material.button.MaterialButton android:id="@+id/btnNewRag"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp"
+            android:text="@string/btn_new_rag" android:textAllCaps="false" android:textColor="@color/text_on_dark"
+            app:backgroundTint="@color/purple_500" app:cornerRadius="12dp"/>
+
+        <com.google.android.material.button.MaterialButton android:id="@+id/btnNewUnion"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp"
+            android:text="@string/btn_new_union" android:textAllCaps="false" android:textColor="@color/text_on_dark"
+            app:backgroundTint="@color/purple_700" app:cornerRadius="12dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnOpenRagList"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp"
+            android:text="@string/btn_rag_list" android:textAllCaps="false" android:textColor="@color/text_primary"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" app:cornerRadius="12dp"/>
+
+        <TextView android:id="@+id/tvRagCount" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="4dp" android:textColor="@color/text_secondary" android:textSize="12sp"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp"
+            android:text="@string/label_models" android:textColor="@color/text_secondary" android:textStyle="bold"/>
+        <androidx.recyclerview.widget.RecyclerView android:id="@+id/rvModels"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:nestedScrollingEnabled="false"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp"
+            android:text="@string/label_chats" android:textColor="@color/text_secondary" android:textStyle="bold"/>
+        <androidx.recyclerview.widget.RecyclerView android:id="@+id/rvChats"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:nestedScrollingEnabled="false"/>
+    
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp"
+            android:text="@string/label_unions" android:textColor="@color/text_secondary" android:textStyle="bold"/>
+        <androidx.recyclerview.widget.RecyclerView android:id="@+id/rvUnions"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:nestedScrollingEnabled="false"/>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

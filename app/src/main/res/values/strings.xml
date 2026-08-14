@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LModel Studio</string>
+    <string name="btn_create_model">Создать модель</string>
+    <string name="empty_chats">Пока нет ни одного чата</string>
+    <string name="empty_models">Пока нет ни одной модели</string>
+
+    <string name="title_new_chat">Новый чат</string>
+    <string name="hint_chat_name">Имя чата</string>
+    <string name="hint_system_prompt">Системный промпт для чат-бота</string>
+    <string name="label_model">Модель</string>
+    <string name="btn_select_model">Выбрать модель</string>
+    <string name="btn_create_chat">Создать чат</string>
+    <string name="cb_allow_attachments">Разрешить прикреплять файлы</string>
+    <string name="label_attachment_types">Разрешённые типы вложений</string>
+
+    <string name="hint_message">Сообщение…</string>
+    <string name="btn_send">Отправить</string>
+    <string name="btn_attach">Прикрепить</string>
+
+    <string name="title_model_editor_new">Новая модель</string>
+    <string name="title_model_editor_edit">Редактор модели</string>
+    <string name="hint_model_name">Имя модели</string>
+    <string name="label_model_supports">Модель обучается на:</string>
+    <string name="type_text">Текст</string>
+    <string name="type_photo">Фото</string>
+    <string name="type_video">Видео</string>
+    <string name="type_audio">Аудио</string>
+    <string name="label_parameters">Параметры модели (только значение)</string>
+    <string name="btn_add_parameter">Добавить параметр</string>
+    <string name="btn_save_model">Сохранить</string>
+    <string name="btn_train_model">Обучить модель</string>
+    <string name="btn_dev_mode">Dev Mode</string>
+    <string name="title_train_model">Обучение модели</string>
+    <string name="label_add_text_training">Добавить обучающий текст</string>
+    <string name="hint_training_text">Вставьте текст или статью…</string>
+    <string name="btn_add_text">Добавить текст</string>
+    <string name="btn_add_photo">Добавить фото</string>
+    <string name="btn_add_video">Добавить видео</string>
+    <string name="btn_add_audio">Добавить аудио</string>
+    <string name="label_training_data">Обучающие данные</string>
+    <string name="btn_start_training">Начать обучение</string>
+    <string name="note_train_text_only">Обучение только на тексте. Модель индексирует предложения и отвечает через поиск + синтез. После обучения статус «Обучена» обновляется сразу.</string>
+    <string name="trained_ok">Обучено на %1$d текстах (%2$d предложений, словарь %3$d). Статус: обучена.</string>
+    <string name="error_need_text">Добавьте хотя бы один текст для обучения.</string>
+    <string name="error_train_save">Не удалось сохранить обучение. Попробуйте ещё раз.</string>
+    <string name="label_select_model">Модели</string>
+    <string name="checkbox_allow_attachments">Разрешать прикреплять файлы</string>
+    <string name="label_no_model_selected">Модель не выбрана</string>
+    <string name="label_allowed_types">Типы файлов, которые можно прикреплять</string>
+
+    <string name="dialog_delete_chat_title">Удалить чат?</string>
+    <string name="dialog_delete_model_title">Удалить модель?</string>
+    <string name="dialog_delete_message">Это действие нельзя отменить.</string>
+    <string name="action_delete">Удалить</string>
+    <string name="action_cancel">Отмена</string>
+    <string name="action_ok">ОК</string>
+    <string name="action_edit">Изменить</string>
+
+    <string name="dialog_parameter_title_add">Новый параметр</string>
+    <string name="dialog_parameter_title_edit">Изменить значение</string>
+    <string name="hint_parameter_key">Название параметра</string>
+    <string name="hint_parameter_value">Числовое значение</string>
+    <string name="error_name_required">Введите имя</string>
+    <string name="error_model_required">Выберите модель</string>
+    <string name="error_no_models_yet">Сначала создайте хотя бы одну модель</string>
+    <string name="error_number_required">Введите числовое значение</string>
+
+    <string name="title_dev_mode">Dev Mode</string>
+    <string name="label_export">Экспорт модели</string>
+    <string name="btn_export_onnx_tflite">Экспорт .onnx + .tflite</string>
+    <string name="export_done">Экспорт завершён</string>
+    <string name="error_not_trained">Сначала обучите модель</string>
+    <string name="label_api">Локальный API</string>
+    <string name="btn_start_api">Запустить локальный API</string>
+    <string name="btn_stop_api">Остановить API</string>
+    <string name="api_running">API: %1$s</string>
+    <string name="api_stopped">API остановлен</string>
+    <string name="api_start_fail">Не удалось занять порт 8765</string>
+    <string name="btn_copy_client">Копировать примеры клиента</string>
+    <string name="copied">Скопировано</string>
+    <string name="label_probe">Проверка рассуждений</string>
+    <string name="hint_probe">Тестовый вопрос…</string>
+    <string name="btn_probe">Спросить модель</string>
+    <string name="label_reasoning">Рассуждение</string>
+
+    <string name="btn_new_model">Создать модель</string>
+    <string name="btn_new_chat">Создать чат-бота</string>
+    <string name="btn_new_rag">Создать RAG-бота</string>
+    <string name="btn_rag_list">Список RAG-ботов</string>
+    <string name="label_actions">Действия</string>
+    <string name="label_models">Модели</string>
+    <string name="label_chats">Чаты</string>
+    <string name="rag_bots_count">RAG-ботов: %1$d</string>
+    <string name="source_model">Источник: модель</string>
+    <string name="source_rag">Источник: RAG-бот</string>
+    <string name="switch_use_model">Модель (выкл = RAG)</string>
+    <string name="btn_select_rag">Выбрать RAG-бота</string>
+    <string name="error_no_rag_yet">Сначала создайте RAG-бота</string>
+    <string name="error_rag_required">Выберите RAG-бота</string>
+    <string name="title_rag_editor">RAG-бот</string>
+    <string name="title_rag_list">RAG-боты</string>
+    <string name="hint_rag_name">Имя RAG-бота</string>
+    <string name="hint_rag_desc">Описание</string>
+    <string name="hint_rag_knowledge">База знаний (фрагменты через пустую строку)</string>
+    <string name="btn_save_rag">Сохранить RAG-бота</string>
+    <string name="rag_saved">RAG-бот сохранён</string>
+    <string name="title_prolog_train">Обучение Prolog</string>
+    <string name="btn_train_prolog">Обучение Prolog</string>
+    <string name="btn_add_prolog">Добавить Prolog</string>
+    <string name="btn_start_prolog_train">Обучить на Prolog</string>
+    <string name="hint_prolog">parent(tom, bob).\ngrandparent(X,Y) :- parent(X,Z), parent(Z,Y).</string>
+    <string name="note_prolog">Отдельный экран: факты и правила Prolog. Затем «Обучить».</string>
+    <string name="error_need_prolog">Добавьте хотя бы один блок Prolog</string>
+    <string name="label_model_prompt">Системный промпт модели</string>
+    <string name="model_prompt_readonly_hint">Промпт задаётся в чат-боте. Здесь только справка: язык первой реплики фиксируется, пока пользователь не разрешит смену.</string>
+    <string name="status_trained">Статус: обучена</string>
+    <string name="status_not_trained">Статус: не обучена</string>
+    <string name="error_save_model_first">Сначала сохраните модель</string>
+    <string name="model_saved">Модель сохранена</string>
+
+
+    <string name="btn_new_union">Создать объединение (Beta)</string>
+    <string name="label_unions">Объединения (Beta)</string>
+    <string name="title_new_union">Новое объединение · Beta</string>
+    <string name="union_beta_badge">Beta — диалог двух моделей</string>
+    <string name="hint_union_name">Название объединения</string>
+    <string name="hint_union_topic">Тема разговора (необязательно)</string>
+    <string name="label_model_a">Модель A</string>
+    <string name="label_model_b">Модель B</string>
+    <string name="btn_create_union">Создать объединение</string>
+    <string name="btn_union_start">Пуск</string>
+    <string name="btn_union_stop">Стоп</string>
+
+    <string name="title_model_editor">Настройки модели</string>
+    <string name="btn_start_local_api">Запустить локальный API</string>
+    <string name="btn_stop_local_api">Остановить локальный API</string>
+    <string name="btn_deploy_remote_api">Пакет этой модели (PAW / VPS)</string>
+    <string name="title_markdown_train">Обучение Markdown</string>
+    <string name="btn_train_markdown">Обучение Markdown</string>
+    <string name="error_save_first">Сначала сохраните модель</string>
+    <string name="title_coding_train">Обучение кодингу</string>
+    <string name="btn_train_coding">Обучение кодингу</string>
+    <string name="title_coding_languages">Языки кодинга</string>
+    <string name="coding_lang_count">Языков: %1$d / %2$d</string>
+    <string name="error_language_empty">Введите название языка</string>
+    <string name="error_language_max">Максимум %1$d языков</string>
+    <string name="error_language_need_one">Добавьте хотя бы один язык</string>
+</resources>

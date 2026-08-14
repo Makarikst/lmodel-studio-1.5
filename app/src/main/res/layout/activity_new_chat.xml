@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+    android:background="@color/background">
+
+        <EditText
+            android:id="@+id/etChatName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:background="@drawable/bg_card"
+            android:hint="@string/hint_chat_name"
+            android:inputType="text"
+            android:padding="14dp"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_hint" />
+
+        <EditText
+            android:id="@+id/etSystemPrompt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_card"
+            android:gravity="top"
+            android:hint="@string/hint_system_prompt"
+            android:inputType="textMultiLine"
+            android:minLines="3"
+            android:padding="14dp"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_hint" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/label_select_model"
+            android:textColor="@color/text_secondary"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/tvSourceLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/source_model"
+            android:textColor="@color/text_secondary"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switchSource"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/switch_use_model"
+            android:textColor="@color/text_primary"
+            android:checked="true"/>
+
+        <Button
+            android:id="@+id/btnSelectModel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_card"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:text="@string/label_no_model_selected"
+            android:textAllCaps="false"
+            android:textColor="@color/text_primary" />
+
+        <CheckBox
+            android:id="@+id/cbAllowAttachments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/checkbox_allow_attachments"  android:textColor="@color/text_primary"/>
+
+        <LinearLayout
+            android:id="@+id/layoutAttachmentTypes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_allowed_types"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp" />
+
+            <CheckBox
+                android:id="@+id/cbTypePhoto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/type_photo"  android:textColor="@color/text_primary"/>
+
+            <CheckBox
+                android:id="@+id/cbTypeVideo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/type_video"  android:textColor="@color/text_primary"/>
+
+            <CheckBox
+                android:id="@+id/cbTypeAudio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/type_audio"  android:textColor="@color/text_primary"/>
+
+            <CheckBox
+                android:id="@+id/cbTypeText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/type_text"  android:textColor="@color/text_primary"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnCreateChat"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="24dp"
+            app:backgroundTint="@color/purple_500"
+            android:text="@string/btn_create_chat"
+            android:textAllCaps="false"
+            android:textColor="@color/text_on_dark" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

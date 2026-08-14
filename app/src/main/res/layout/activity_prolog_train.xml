@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:padding="16dp" android:background="@color/background">
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="@string/note_prolog" android:textColor="@color/text_secondary" android:textSize="13sp"/>
+    <EditText android:id="@+id/etProlog" android:layout_width="match_parent" android:layout_height="120dp"
+        android:gravity="top" android:hint="@string/hint_prolog" android:inputType="textMultiLine"
+        android:textColor="@color/text_primary" android:textColorHint="@color/text_secondary"
+        android:background="@drawable/bg_card" android:padding="10dp" android:layout_marginTop="8dp"/>
+    <Button android:id="@+id/btnAddProlog" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" android:text="@string/btn_add_prolog" android:textAllCaps="false"/>
+    <androidx.recyclerview.widget.RecyclerView android:id="@+id/rvPrologItems"
+        android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:layout_marginTop="8dp"/>
+    <Button android:id="@+id/btnTrainProlog" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="@string/btn_start_prolog_train" android:textAllCaps="false"/>
+</LinearLayout>
