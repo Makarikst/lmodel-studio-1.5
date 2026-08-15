@@ -6,6 +6,8 @@
     <string name="empty_models">Пока нет ни одной модели</string>
     <string name="title_bash_train">Обучение Bash</string>
     <string name="btn_train_bash">Обучение Bash</string>
+    <string name="btn_save">Сохранить</string>
+    <string name="label_system_prompt">Системный промпт</string>
 
     <string name="title_new_chat">Новый чат</string>
     <string name="hint_chat_name">Имя чата</string>
@@ -148,4 +150,6 @@
     <string name="error_language_empty">Введите название языка</string>
     <string name="error_language_max">Максимум %1$d языков</string>
     <string name="error_language_need_one">Добавьте хотя бы один язык</string>
+    <string name="toast_text_added">Текст добавлен</string>
+    <string name="error_empty_text">Добавьте текст</string>
 </resources>

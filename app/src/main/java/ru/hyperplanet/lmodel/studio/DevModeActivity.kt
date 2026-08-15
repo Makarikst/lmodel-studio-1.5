@@ -17,13 +17,13 @@ import ru.hyperplanet.lmodel.studio.ml.LmsExporter
 import ru.hyperplanet.lmodel.studio.ml.LocalApiServer
 import ru.hyperplanet.lmodel.studio.ml.ModelExporter
 import ru.hyperplanet.lmodel.studio.ml.ModelTrainingSync
-import ru.hyperplanet.lmodel.studio.ml.ModelRemoteSync
+import ru.hyperplanet.lmodel.studio.ml.ModelRemoteSync.buildForModel
 import java.io.File
 
 class DevModeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDevModeBinding
     private val db by lazy { AppDatabase.getInstance(this) }
-    private var modelId = -1L
+    private var modelId = (-1L).toLong()
     private var localApi: LocalApiServer? = null
     private var probeTapCount = 0
     private var lastProbeTap = 0L
@@ -178,7 +178,7 @@ class DevModeActivity : AppCompatActivity() {
                 }
                 Toast.makeText(this@DevModeActivity, "Сборка пакета для этой модели…", Toast.LENGTH_SHORT).show()
                 val pkg = withContext(Dispatchers.IO) {
-                    ModelRemoteSync.buildForModel(this@DevModeActivity, modelId)
+                    buildForModel(this@DevModeActivity, modelId=modelId,)
                 }
                 if (pkg.error != null) {
                     binding.tvApiStatus.text = "Ошибка: ${pkg.error}"

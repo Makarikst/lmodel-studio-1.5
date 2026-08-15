@@ -1,45 +1,169 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:tools="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="@string/note_train_text_only" android:textColor="@color/text_secondary" android:textSize="13sp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_add_text_training"
+        android:textColor="@color/text_secondary"
+        android:textStyle="bold" />
 
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_marginTop="16dp" android:text="@string/label_add_text_training"
-        android:textColor="@color/text_secondary" android:textStyle="bold" />
+    <EditText
+        android:id="@+id/etTrainingText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_card"
+        android:gravity="top"
+        android:hint="@string/hint_training_text"
+        android:inputType="textMultiLine"
+        android:minLines="3"
+        android:padding="12dp"
+        android:textColor="@color/text_primary"
+        android:textColorHint="@color/text_hint" />
 
-    <EditText android:id="@+id/etTrainingText" android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:layout_marginTop="8dp" android:background="@drawable/bg_card" android:gravity="top"
-        android:hint="@string/hint_training_text" android:inputType="textMultiLine" android:minLines="4"
-        android:padding="12dp" android:textColor="@color/text_primary" android:textColorHint="@color/text_hint" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAddText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/btn_add_text"
+        android:textAllCaps="false"
+        app:backgroundTint="@color/purple_500"
+        app:cornerRadius="12dp" />
 
-    <com.google.android.material.button.MaterialButton android:id="@+id/btnAddText"
-        android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp"
-        android:text="@string/btn_add_text" android:textAllCaps="false" android:textColor="@color/text_on_dark"
-        app:backgroundTint="@color/purple_500" app:cornerRadius="12dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Р¤Р°Р№Р»С‹: С‚РµРєСЃС‚ / С„РѕС‚Рѕ / Р°СѓРґРёРѕ / РІРёРґРµРѕ"
+        android:textColor="@color/text_secondary"
+        android:textStyle="bold" />
 
-    <!-- Hidden legacy media buttons for view binding compatibility -->
-    <Button android:id="@+id/btnAddPhoto" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
-    <Button android:id="@+id/btnAddVideo" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
-    <Button android:id="@+id/btnAddAudio" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="РџСЂРёРєСЂРµРїРё С„Р°Р№Р», РѕРїРёС€Рё Рё СЃРѕС…СЂР°РЅРё. РР· РґРѕРєСѓРјРµРЅС‚РѕРІ С‚РµРєСЃС‚ С‡РёС‚Р°РµС‚СЃСЏ; РґР»СЏ РјРµРґРёР° вЂ” РјРµС‚Р°РґР°РЅРЅС‹Рµ + РѕРїРёСЃР°РЅРёРµ."
+        android:textColor="@color/text_hint"
+        android:textSize="12sp" />
 
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_marginTop="16dp" android:text="@string/label_training_data"
-        android:textColor="@color/text_secondary" android:textStyle="bold" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
 
-    <androidx.recyclerview.widget.RecyclerView android:id="@+id/rvTrainingItems"
-        android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
-        android:layout_marginTop="8dp" tools:listitem="@layout/item_training_item" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAddFile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Р¤Р°Р№Р»"
+            android:textAllCaps="false"
+            android:textSize="12sp"
+            app:backgroundTint="@color/purple_700"
+            app:cornerRadius="10dp" />
 
-    <com.google.android.material.button.MaterialButton android:id="@+id/btnStartTraining"
-        android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="12dp"
-        android:text="@string/btn_start_training" android:textAllCaps="false" android:textColor="@color/text_on_dark"
-        android:textStyle="bold" app:backgroundTint="@color/purple_500" app:cornerRadius="14dp" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAddPhoto"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:text="Р¤РѕС‚Рѕ"
+            android:textAllCaps="false"
+            android:textSize="12sp"
+            app:backgroundTint="@color/purple_700"
+            app:cornerRadius="10dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAddAudio"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:text="РђСѓРґРёРѕ"
+            android:textAllCaps="false"
+            android:textSize="12sp"
+            app:backgroundTint="@color/purple_700"
+            app:cornerRadius="10dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAddVideo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:text="Р’РёРґРµРѕ"
+            android:textAllCaps="false"
+            android:textSize="12sp"
+            app:backgroundTint="@color/purple_700"
+            app:cornerRadius="10dp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvPendingFile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp" />
+
+    <EditText
+        android:id="@+id/etMediaDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_card"
+        android:gravity="top"
+        android:hint="РћРїРёСЃР°РЅРёРµ С„Р°Р№Р»Р°"
+        android:inputType="textMultiLine"
+        android:minLines="2"
+        android:padding="12dp"
+        android:textColor="@color/text_primary"
+        android:textColorHint="@color/text_hint" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSaveMedia"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="РЎРѕС…СЂР°РЅРёС‚СЊ С„Р°Р№Р» РІ РѕР±СѓС‡РµРЅРёРµ"
+        android:textAllCaps="false"
+        app:backgroundTint="@color/purple_500"
+        app:cornerRadius="12dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/label_training_data"
+        android:textColor="@color/text_secondary"
+        android:textStyle="bold" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvTrainingItems"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnStartTraining"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/btn_start_training"
+        android:textAllCaps="false"
+        android:textStyle="bold"
+        app:backgroundTint="@color/purple_500"
+        app:cornerRadius="14dp" />
 </LinearLayout>

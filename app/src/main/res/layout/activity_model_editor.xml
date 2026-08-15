@@ -68,6 +68,104 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:text="@string/label_system_prompt"
+            android:textColor="@color/text_secondary"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etSystemPromptReadonly"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_card"
+            android:gravity="top"
+            android:minLines="3"
+            android:padding="14dp"
+            android:textColor="@color/text_secondary"
+            android:textColorHint="@color/text_hint" />
+
+        <TextView
+            android:id="@+id/tvTrainedStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSaveModel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/btn_save"
+            android:textAllCaps="false"
+            app:backgroundTint="@color/purple_500"
+            app:cornerRadius="12dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTrainModel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/btn_train_model"
+            android:textAllCaps="false"
+            app:backgroundTint="@color/purple_700"
+            app:cornerRadius="12dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTrainMarkdown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/btn_train_markdown"
+            android:textAllCaps="false"
+            app:backgroundTint="@color/purple_700"
+            app:cornerRadius="12dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTrainCoding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/btn_train_coding"
+            android:textAllCaps="false"
+            app:backgroundTint="@color/purple_700"
+            app:cornerRadius="12dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTrainBash"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/btn_train_bash"
+            android:textAllCaps="false"
+            app:backgroundTint="@color/purple_700"
+            app:cornerRadius="12dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTrainProlog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/btn_train_prolog"
+            android:textAllCaps="false"
+            app:backgroundTint="@color/purple_700"
+            app:cornerRadius="12dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDevMode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/btn_dev_mode"
+            android:textAllCaps="false"
+            app:backgroundTint="@color/purple_500"
+            app:cornerRadius="12dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:text="@string/label_parameters"
             android:textColor="@color/text_secondary"
             android:textStyle="bold" />
@@ -84,66 +182,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"
             android:text="@string/btn_add_parameter"
             android:textAllCaps="false"
             android:visibility="gone"
-            app:backgroundTint="@color/purple_700" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSaveModel"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/btn_save_model"
-            android:textAllCaps="false"
-            android:textColor="@color/text_on_dark"
-            app:backgroundTint="@color/purple_500"
-            app:cornerRadius="14dp" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnTrainModel"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginTop="12dp"
-            android:text="@string/btn_train_model"
-            android:textAllCaps="false"
-            android:textColor="@color/text_on_dark"
             app:backgroundTint="@color/purple_700"
-            app:cornerRadius="14dp" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnDevMode"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="24dp"
-            android:text="@string/btn_dev_mode"
-            android:textAllCaps="false"
-            android:textColor="@color/text_on_dark"
-            app:backgroundTint="#333333"
-            app:cornerRadius="14dp"
-            app:strokeColor="@color/purple_500"
-            app:strokeWidth="1dp" />
-    
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="12dp"
-            android:text="@string/label_model_prompt" android:textColor="@color/text_secondary"/>
-        <EditText android:id="@+id/etSystemPromptReadonly" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:minLines="2" android:enabled="false" android:focusable="false" android:textColor="@color/text_secondary"
-            android:background="@drawable/bg_card" android:padding="10dp"/>
-        <TextView android:id="@+id/tvTrainedStatus" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginTop="8dp" android:textColor="@color/text_secondary"/>
-        <com.google.android.material.button.MaterialButton android:id="@+id/btnTrainMarkdown"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/btn_train_markdown" android:textAllCaps="false"
-            app:backgroundTint="@color/purple_700" app:cornerRadius="12dp"/>
-        <com.google.android.material.button.MaterialButton android:id="@+id/btnTrainCoding"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/btn_train_coding" android:textAllCaps="false"
-            app:backgroundTint="@color/purple_700" app:cornerRadius="12dp"/>
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnTrainProlog" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginTop="8dp" android:text="@string/btn_train_prolog" android:textAllCaps="false"/>
-</LinearLayout>
+            app:cornerRadius="12dp" />
+    </LinearLayout>
 </androidx.core.widget.NestedScrollView>

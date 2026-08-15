@@ -41,11 +41,18 @@ data class TrainingItem(
     val modelId: Long,
     val type: String,
     val content: String,
-    val addedAt: Long = System.currentTimeMillis()
+    val addedAt: Long = System.currentTimeMillis(),
+    val mediaPath: String? = null,
+    val analysisText: String? = null,
+    val originalName: String? = null,
 ) {
     companion object {
         const val TYPE_TEXT = "TEXT"
         const val TYPE_PROLOG = "PROLOG"
+        const val TYPE_PHOTO = "PHOTO"
+        const val TYPE_VIDEO = "VIDEO"
+        const val TYPE_AUDIO = "AUDIO"
+        const val TYPE_FILE = "FILE"
     }
 }
 
