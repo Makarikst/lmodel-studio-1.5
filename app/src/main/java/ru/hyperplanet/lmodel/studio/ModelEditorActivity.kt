@@ -59,10 +59,12 @@ class ModelEditorActivity : AppCompatActivity() {
 
         try { binding.btnAddParameter.visibility = android.view.View.GONE } catch (_: Exception) {}
         binding.btnSaveModel.setOnClickListener { saveModel() }
+
         binding.btnTrainModel.setOnClickListener {
             if (modelId == -1L) { Toast.makeText(this, R.string.error_save_model_first, Toast.LENGTH_SHORT).show(); return@setOnClickListener }
             startActivity(Intent(this, TrainModelActivity::class.java).putExtra(MainActivity.EXTRA_MODEL_ID, modelId))
         }
+
         binding.btnTrainMarkdown.setOnClickListener {
             if (modelId == -1L) {
                 Toast.makeText(this, R.string.error_save_first, Toast.LENGTH_SHORT).show()
@@ -70,6 +72,15 @@ class ModelEditorActivity : AppCompatActivity() {
             }
             startActivity(Intent(this, MarkdownTrainActivity::class.java).putExtra(MainActivity.EXTRA_MODEL_ID, modelId))
         }
+
+        binding.btnTrainBash.setOnClickListener {
+            if (modelId == -1L) {
+                Toast.makeText(this, R.string.error_save_first, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            startActivity(Intent(this, BashTrainActivity::class.java).putExtra(MainActivity.EXTRA_MODEL_ID, modelId))
+        }
+
         binding.btnTrainCoding.setOnClickListener {
             if (modelId == -1L) {
                 Toast.makeText(this, R.string.error_save_first, Toast.LENGTH_SHORT).show()
@@ -77,16 +88,17 @@ class ModelEditorActivity : AppCompatActivity() {
             }
             startActivity(Intent(this, CodingLanguagesActivity::class.java).putExtra(MainActivity.EXTRA_MODEL_ID, modelId))
         }
+
         binding.btnTrainProlog.setOnClickListener {
             if (modelId == -1L) { Toast.makeText(this, R.string.error_save_model_first, Toast.LENGTH_SHORT).show(); return@setOnClickListener }
             startActivity(Intent(this, PrologTrainActivity::class.java).putExtra(MainActivity.EXTRA_MODEL_ID, modelId))
         }
+
         binding.btnDevMode.setOnClickListener {
             if (modelId == -1L) { Toast.makeText(this, R.string.error_save_model_first, Toast.LENGTH_SHORT).show(); return@setOnClickListener }
             startActivity(Intent(this, DevModeActivity::class.java).putExtra(MainActivity.EXTRA_MODEL_ID, modelId))
         }
     }
-
     override fun onResume() {
         super.onResume()
         if (modelId != -1L) lifecycleScope.launch {
