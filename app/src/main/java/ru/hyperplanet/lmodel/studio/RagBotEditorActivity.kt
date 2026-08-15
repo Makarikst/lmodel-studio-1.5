@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.hyperplanet.lmodel.studio.data.AppDatabase
 import ru.hyperplanet.lmodel.studio.data.RagBotEntity
+import ru.hyperplanet.lmodel.studio.data.update
 import ru.hyperplanet.lmodel.studio.util.PersistentMediaStorage
 import ru.hyperplanet.lmodel.studio.databinding.ActivityRagBotEditorBinding
 

@@ -14,6 +14,7 @@ import ru.hyperplanet.lmodel.studio.adapters.ParameterAdapter
 import ru.hyperplanet.lmodel.studio.data.AppDatabase
 import ru.hyperplanet.lmodel.studio.data.ModelEntity
 import ru.hyperplanet.lmodel.studio.data.ModelParameter
+import ru.hyperplanet.lmodel.studio.data.update
 import ru.hyperplanet.lmodel.studio.util.PersistentMediaStorage
 import ru.hyperplanet.lmodel.studio.ml.ModelTrainingSync
 import ru.hyperplanet.lmodel.studio.databinding.ActivityModelEditorBinding

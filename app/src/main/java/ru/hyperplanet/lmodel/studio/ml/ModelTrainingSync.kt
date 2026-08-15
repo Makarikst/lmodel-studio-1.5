@@ -2,6 +2,7 @@ package ru.hyperplanet.lmodel.studio.ml
 
 import ru.hyperplanet.lmodel.studio.data.AppDatabase
 import ru.hyperplanet.lmodel.studio.data.TrainingItem
+import ru.hyperplanet.lmodel.studio.data.update
 
 /**
  * Синхронизация статуса «обучена» с реальными данными обучения.

@@ -4,6 +4,8 @@
     <string name="btn_create_model">Создать модель</string>
     <string name="empty_chats">Пока нет ни одного чата</string>
     <string name="empty_models">Пока нет ни одной модели</string>
+    <string name="title_bash_train">Обучение Bash</string>
+    <string name="btn_train_bash">Обучение Bash</string>
 
     <string name="title_new_chat">Новый чат</string>
     <string name="hint_chat_name">Имя чата</string>

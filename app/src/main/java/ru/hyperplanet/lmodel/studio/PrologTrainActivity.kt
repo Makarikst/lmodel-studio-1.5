@@ -11,6 +11,8 @@ import kotlinx.coroutines.withContext
 import ru.hyperplanet.lmodel.studio.adapters.TrainingItemAdapter
 import ru.hyperplanet.lmodel.studio.data.AppDatabase
 import ru.hyperplanet.lmodel.studio.data.TrainingItem
+import ru.hyperplanet.lmodel.studio.data.delete
+import ru.hyperplanet.lmodel.studio.data.update
 import ru.hyperplanet.lmodel.studio.util.PersistentMediaStorage
 import ru.hyperplanet.lmodel.studio.databinding.ActivityPrologTrainBinding
 import ru.hyperplanet.lmodel.studio.ml.InferenceEngine

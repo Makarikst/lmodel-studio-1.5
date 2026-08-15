@@ -2,97 +2,194 @@ package ru.hyperplanet.lmodel.studio.data
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Update
 
+/**
+ * Без suspend на insert/update/delete — KSP не генерирует Continuation и не ломает *Dao_Impl.
+ * Вызывай из withContext(Dispatchers.IO) { ... }.
+ */
 @Dao
 interface ModelDao {
     @Query("SELECT * FROM models ORDER BY createdAt DESC")
     fun observeAll(): LiveData<List<ModelEntity>>
+
     @Query("SELECT * FROM models ORDER BY createdAt DESC")
-    suspend fun getAllOnce(): List<ModelEntity>
+    fun getAllOnce(): List<ModelEntity>
+
     @Query("SELECT * FROM models WHERE id = :id LIMIT 1")
-    suspend fun getById(id: Long): ModelEntity?
-    @Insert suspend fun insert(model: ModelEntity): Long
-    @Update suspend fun update(model: ModelEntity)
-    @Delete suspend fun delete(model: ModelEntity)
+    fun getById(id: Long): ModelEntity?
+
+    @Insert
+    fun insert(model: ModelEntity): Long
+
+    @Query(
+        """
+        UPDATE models SET name = :name, supportsText = :supportsText, supportsPhoto = :supportsPhoto,
+        supportsVideo = :supportsVideo, supportsAudio = :supportsAudio, isTrained = :isTrained,
+        trainedDataJson = :trainedDataJson, apiKey = :apiKey, createdAt = :createdAt
+        WHERE id = :id
+        """
+    )
+    fun updateFields(
+        id: Long,
+        name: String,
+        supportsText: Boolean,
+        supportsPhoto: Boolean,
+        supportsVideo: Boolean,
+        supportsAudio: Boolean,
+        isTrained: Boolean,
+        trainedDataJson: String?,
+        apiKey: String?,
+        createdAt: Long
+    ): Int
+
+    @Query("DELETE FROM models WHERE id = :id")
+    fun deleteById(id: Long): Int
 }
 
 @Dao
 interface ModelParameterDao {
     @Query("SELECT * FROM model_parameters WHERE modelId = :modelId ORDER BY id ASC")
     fun observeForModel(modelId: Long): LiveData<List<ModelParameter>>
+
     @Query("SELECT * FROM model_parameters WHERE modelId = :modelId ORDER BY id ASC")
-    suspend fun getForModel(modelId: Long): List<ModelParameter>
-    @Insert suspend fun insert(param: ModelParameter): Long
-    @Update suspend fun update(param: ModelParameter)
-    @Delete suspend fun delete(param: ModelParameter)
+    fun getForModel(modelId: Long): List<ModelParameter>
+
+    @Insert
+    fun insert(param: ModelParameter): Long
+
+    @Query("UPDATE model_parameters SET modelId = :modelId, `key` = :key, value = :value WHERE id = :id")
+    fun updateFields(id: Long, modelId: Long, key: String, value: String): Int
+
+    @Query("DELETE FROM model_parameters WHERE id = :id")
+    fun deleteById(id: Long): Int
 }
 
 @Dao
 interface TrainingItemDao {
     @Query("SELECT * FROM training_items WHERE modelId = :modelId ORDER BY addedAt ASC")
     fun observeForModel(modelId: Long): LiveData<List<TrainingItem>>
+
     @Query("SELECT * FROM training_items WHERE modelId = :modelId AND type = :type ORDER BY addedAt ASC")
-    suspend fun getForModelByType(modelId: Long, type: String): List<TrainingItem>
+    fun getForModelByType(modelId: Long, type: String): List<TrainingItem>
+
     @Query("SELECT * FROM training_items WHERE modelId = :modelId ORDER BY addedAt ASC")
-    suspend fun getAllForModel(modelId: Long): List<TrainingItem>
-    @Insert suspend fun insert(item: TrainingItem): Long
-    @Delete suspend fun delete(item: TrainingItem)
+    fun getAllForModel(modelId: Long): List<TrainingItem>
+
+    @Insert
+    fun insert(item: TrainingItem): Long
+
+    @Query("DELETE FROM training_items WHERE id = :id")
+    fun deleteById(id: Long): Int
 }
 
 @Dao
 interface RagBotDao {
     @Query("SELECT * FROM rag_bots ORDER BY createdAt DESC")
     fun observeAll(): LiveData<List<RagBotEntity>>
+
     @Query("SELECT * FROM rag_bots ORDER BY createdAt DESC")
-    suspend fun getAllOnce(): List<RagBotEntity>
+    fun getAllOnce(): List<RagBotEntity>
+
     @Query("SELECT * FROM rag_bots WHERE id = :id LIMIT 1")
-    suspend fun getById(id: Long): RagBotEntity?
-    @Insert suspend fun insert(bot: RagBotEntity): Long
-    @Update suspend fun update(bot: RagBotEntity)
-    @Delete suspend fun delete(bot: RagBotEntity)
+    fun getById(id: Long): RagBotEntity?
+
+    @Insert
+    fun insert(bot: RagBotEntity): Long
+
+    @Query(
+        """
+        UPDATE rag_bots SET name = :name, description = :description,
+        knowledgeJson = :knowledgeJson, createdAt = :createdAt WHERE id = :id
+        """
+    )
+    fun updateFields(
+        id: Long,
+        name: String,
+        description: String,
+        knowledgeJson: String,
+        createdAt: Long
+    ): Int
+
+    @Query("DELETE FROM rag_bots WHERE id = :id")
+    fun deleteById(id: Long): Int
 }
 
 @Dao
 interface ChatDao {
     @Query("SELECT * FROM chats ORDER BY createdAt DESC")
     fun observeAll(): LiveData<List<Chat>>
+
     @Query("SELECT * FROM chats WHERE id = :id LIMIT 1")
-    suspend fun getById(id: Long): Chat?
-    @Insert suspend fun insert(chat: Chat): Long
-    @Update suspend fun update(chat: Chat)
-    @Delete suspend fun delete(chat: Chat)
+    fun getById(id: Long): Chat?
+
+    @Insert
+    fun insert(chat: Chat): Long
+
+    @Query(
+        """
+        UPDATE chats SET name = :name, systemPrompt = :systemPrompt, sourceType = :sourceType,
+        modelId = :modelId, ragBotId = :ragBotId, allowAttachments = :allowAttachments,
+        allowedTypes = :allowedTypes, lockedLanguage = :lockedLanguage, createdAt = :createdAt
+        WHERE id = :id
+        """
+    )
+    fun updateFields(
+        id: Long,
+        name: String,
+        systemPrompt: String,
+        sourceType: String,
+        modelId: Long,
+        ragBotId: Long,
+        allowAttachments: Boolean,
+        allowedTypes: String,
+        lockedLanguage: String?,
+        createdAt: Long
+    ): Int
+
+    @Query("DELETE FROM chats WHERE id = :id")
+    fun deleteById(id: Long): Int
 }
 
 @Dao
 interface MessageDao {
     @Query("SELECT * FROM messages WHERE chatId = :chatId ORDER BY timestamp ASC")
     fun observeForChat(chatId: Long): LiveData<List<Message>>
+
     @Query("SELECT * FROM messages WHERE chatId = :chatId ORDER BY timestamp ASC")
-    suspend fun getForChatOnce(chatId: Long): List<Message>
-    @Insert suspend fun insert(message: Message): Long
+    fun getForChatOnce(chatId: Long): List<Message>
+
+    @Insert
+    fun insert(message: Message): Long
 }
 
 @Dao
 interface ModelUnionDao {
     @Query("SELECT * FROM model_unions ORDER BY createdAt DESC")
     fun observeAll(): LiveData<List<ModelUnion>>
+
     @Query("SELECT * FROM model_unions WHERE id = :id LIMIT 1")
-    suspend fun getById(id: Long): ModelUnion?
-    @Insert suspend fun insert(u: ModelUnion): Long
-    @Delete suspend fun delete(u: ModelUnion)
+    fun getById(id: Long): ModelUnion?
+
+    @Insert
+    fun insert(u: ModelUnion): Long
+
+    @Query("DELETE FROM model_unions WHERE id = :id")
+    fun deleteById(id: Long): Int
 }
 
 @Dao
 interface UnionMessageDao {
     @Query("SELECT * FROM union_messages WHERE unionId = :unionId ORDER BY timestamp ASC")
     fun observeForUnion(unionId: Long): LiveData<List<UnionMessage>>
+
     @Query("SELECT * FROM union_messages WHERE unionId = :unionId ORDER BY timestamp ASC")
-    suspend fun getForUnionOnce(unionId: Long): List<UnionMessage>
-    @Insert suspend fun insert(m: UnionMessage): Long
+    fun getForUnionOnce(unionId: Long): List<UnionMessage>
+
+    @Insert
+    fun insert(m: UnionMessage): Long
+
     @Query("DELETE FROM union_messages WHERE unionId = :unionId")
-    suspend fun clearUnion(unionId: Long)
+    fun clearUnion(unionId: Long): Int
 }

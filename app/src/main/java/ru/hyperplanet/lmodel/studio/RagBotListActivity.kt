@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.hyperplanet.lmodel.studio.data.AppDatabase
 import ru.hyperplanet.lmodel.studio.data.RagBotEntity
+import ru.hyperplanet.lmodel.studio.data.delete
 import ru.hyperplanet.lmodel.studio.databinding.ActivityRagBotListBinding
 
 class RagBotListActivity : AppCompatActivity() {

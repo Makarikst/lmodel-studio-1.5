@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.hyperplanet.lmodel.studio.data.AppDatabase
+import ru.hyperplanet.lmodel.studio.data.update
 import ru.hyperplanet.lmodel.studio.databinding.ActivityDevModeBinding
 import ru.hyperplanet.lmodel.studio.ml.InferenceEngine
 import ru.hyperplanet.lmodel.studio.ml.LmsExporter

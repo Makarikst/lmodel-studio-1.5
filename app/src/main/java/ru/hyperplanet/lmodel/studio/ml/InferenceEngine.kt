@@ -52,6 +52,7 @@ object InferenceEngine {
             ) active = detected
         }
         val en = active == LanguageLock.Lang.EN
+        val role = SystemPromptRole.parse(systemPrompt)
 
         val data = deserializeTrained(trainedDataJson)
         if (data == null || (data.sentences.isEmpty() && data.prologSource.isEmpty() && data.compiledPrologJson.isNullOrBlank())) {
@@ -108,13 +109,13 @@ object InferenceEngine {
             )
             return GenerationResult(ans, reason, promptTokens, countTokens(ans))
         }
-        if (isIdentity(lower)) {
+        if (isIdentity(lower) || SystemPromptRole.mentionsSelf(userMessage, role)) {
             val ans = systemPrompt.split(Regex("[.\\n]")).firstOrNull()?.trim()?.take(200)
                 ?: if (en) "Local model trained on your data." else "Локальная модель по вашим текстам."
             val reason = buildMetaReasoning(
                 userMessage, en,
                 knowledgeNotes = listOf(ans),
-                plan = if (en) listOf("Say who I am from the system role") else listOf("Ответить, кто я, по роли модели")
+                plan = if (en) listOf("Read full system prompt", role.name?.let { "I am $it" } ?: "Use system prompt", "Stay in role") else listOf("Читаю system prompt", role.name?.let { "Я — $it" } ?: "По system prompt", "Держусь роли")
             )
             return GenerationResult(ans, reason, promptTokens, countTokens(ans))
         }
@@ -124,10 +125,17 @@ object InferenceEngine {
         val facts = retrieve(data, terms, maxOf(topK, 5), temperature)
 
         val notes = facts.take(min(5, facts.size)).map { it.first.trim() }
+        val rolePlan = when {
+            role.name != null && en -> "I am ${role.name} per system prompt — stay in character"
+            role.name != null -> "Я — ${role.name} по system prompt — держаться роли"
+            role.raw.isNotBlank() && en -> "Follow system prompt constraints"
+            role.raw.isNotBlank() -> "Учитывать system prompt"
+            else -> null
+        }
         val plan = if (en) {
-            listOf(analysis.summaryEn, "Generate words from training conditioned on the question")
+            listOfNotNull(rolePlan, analysis.summaryEn, "Generate words from training conditioned on the question")
         } else {
-            listOf(analysis.summaryRu, "Сгенерировать слова из обучения с опорой на вопрос")
+            listOfNotNull(rolePlan, analysis.summaryRu, "Сгенерировать слова из обучения с опорой на вопрос")
         } + (analysis.preferredLangName?.let {
             listOf(if (en) "Use the name «$it» for this language" else "В ответе использовать имя языка «$it»")
         } ?: emptyList())
@@ -143,8 +151,12 @@ object InferenceEngine {
 
         // Генерация текста (не RAG-склейка)
         var seedMsg = userMessage
+        if (role.raw.isNotBlank()) {
+            val roleSeed = listOfNotNull(role.name, role.raw.take(120)).joinToString(" ")
+            seedMsg = "$roleSeed $userMessage"
+        }
         analysis.preferredLangName?.let { pref ->
-            seedMsg = "$userMessage $pref"
+            seedMsg = "$seedMsg $pref"
         }
         var answer = TextGenerator.generate(data, seedMsg, genWords, temperature)
         if (answer.isBlank()) {

@@ -14,6 +14,7 @@ import ru.hyperplanet.lmodel.studio.adapters.ModelAdapter
 import ru.hyperplanet.lmodel.studio.data.AppDatabase
 import ru.hyperplanet.lmodel.studio.data.Chat
 import ru.hyperplanet.lmodel.studio.data.ModelEntity
+import ru.hyperplanet.lmodel.studio.data.delete
 import ru.hyperplanet.lmodel.studio.databinding.ActivityMainBinding
 import ru.hyperplanet.lmodel.studio.util.PersistentMediaStorage
 
@@ -90,7 +91,7 @@ class MainActivity : AppCompatActivity() {
                         androidx.appcompat.app.AlertDialog.Builder(this@MainActivity)
                             .setMessage(R.string.dialog_delete_message)
                             .setPositiveButton(R.string.action_delete) { _, _ ->
-                                lifecycleScope.launch(Dispatchers.IO) { db.modelUnionDao().delete(u) }
+                                lifecycleScope.launch(Dispatchers.IO) { db.modelUnionDao().deleteById(u.id) }
                             }
                             .setNegativeButton(R.string.action_cancel, null).show()
                         true

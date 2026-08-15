@@ -40,5 +40,6 @@
             <activity android:name=".PrologTrainActivity" android:exported="false"/>
             <activity android:name=".NewUnionActivity" android:exported="false"/>
             <activity android:name=".UnionChatActivity" android:exported="false"/>
+        <activity android:name=".BashTrainActivity" android:exported="false" android:label="@string/title_bash_train"/>
     </application>
 </manifest>

@@ -13,6 +13,7 @@ import ru.hyperplanet.lmodel.studio.adapters.MessageAdapter
 import ru.hyperplanet.lmodel.studio.data.AppDatabase
 import ru.hyperplanet.lmodel.studio.data.Chat
 import ru.hyperplanet.lmodel.studio.data.Message
+import ru.hyperplanet.lmodel.studio.data.update
 import ru.hyperplanet.lmodel.studio.databinding.ActivityChatBinding
 import ru.hyperplanet.lmodel.studio.ml.InferenceEngine
 import ru.hyperplanet.lmodel.studio.util.CodingLangStore

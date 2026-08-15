@@ -1,0 +1,114 @@
+package ru.hyperplanet.lmodel.studio
+
+import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import ru.hyperplanet.lmodel.studio.data.AppDatabase
+import ru.hyperplanet.lmodel.studio.data.TrainingItem
+import ru.hyperplanet.lmodel.studio.ml.ModelTrainingSync
+
+/**
+ * Обучение Bash без ViewBinding (нет ActivityBashTrainBinding).
+ */
+class BashTrainActivity : AppCompatActivity() {
+
+    private val db by lazy { AppDatabase.getInstance(this) }
+    private var modelId = -1L
+    val NAME = null
+    val f = null
+
+    private val lessons = listOf(
+        """# Bash — оболочка Linux
+Bash (Bourne Again SHell) — командная оболочка. Команды вводятся в терминале.
+**pwd** — показать текущую папку.
+**ls** — список файлов.
+**cd путь** — перейти в папку.
+**mkdir имя** — создать папку.
+**rm файл** — удалить файл (осторожно).
+**cp a b** — копировать.
+**mv a b** — переместить или переименовать.""",
+        """# Пайпы и перенаправление
+Команда1 | команда2 — передать вывод первой во вторую.
+команда > файл — записать вывод в файл.
+команда >> файл — дописать в конец.
+команда < файл — читать ввод из файла.
+**echo "текст"** — напечатать текст.
+**cat файл** — показать содержимое.""",
+        """# Переменные и скрипты
+NAME="Davi"
+echo "Привет, $NAME"
+Скрипт начинается с **#!/bin/bash**
+Сделать исполняемым: chmod +x script.sh
+Запуск: ./script.sh
+**if [ -f файл ]; then ...; fi** — проверка файла.
+**for f in *; do echo $f; done** — цикл по файлам.""",
+        """# Полезные команды
+**grep -r "текст" .** — поиск в файлах.
+**find . -name "*.kt"** — найти файлы.
+**ps aux** — процессы.
+**kill PID** — завершить процесс.
+**curl URL** — HTTP-запрос.
+**chmod 755 файл** — права доступа."""
+    )
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_bash_train)
+        title = getString(R.string.title_bash_train)
+        modelId = intent.getLongExtra(MainActivity.EXTRA_MODEL_ID, -1)
+        if (modelId == -1L) {
+            finish()
+            return
+        }
+
+        val tvBashNote = findViewById<TextView>(R.id.tvBashNote)
+        val tvPreview = findViewById<TextView>(R.id.tvPreview)
+        val etCustomBash = findViewById<EditText>(R.id.etCustomBash)
+        val btnAddBashLessons = findViewById<Button>(R.id.btnAddBashLessons)
+        val btnAddCustomBash = findViewById<Button>(R.id.btnAddCustomBash)
+
+        tvBashNote.text =
+            "Это обучение знаниям Bash (команды, скрипты). Отдельный Linux-контейнер на телефон как у облачных ИИ здесь не создаётся — для реального shell нужен Termux, VPS или сервер."
+        tvPreview.text = lessons.joinToString("\n\n———\n\n")
+
+        btnAddBashLessons.setOnClickListener { addLessons() }
+        btnAddCustomBash.setOnClickListener {
+            val t = etCustomBash.text?.toString()?.trim().orEmpty()
+            if (t.isEmpty()) {
+                Toast.makeText(this, "Вставь команды или пояснения Bash", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    db.trainingItemDao().insert(
+                        TrainingItem(modelId = modelId, type = TrainingItem.TYPE_TEXT, content = t)
+                    )
+                    ModelTrainingSync.sync(db, modelId)
+                }
+                etCustomBash.setText("")
+                Toast.makeText(this@BashTrainActivity, "Добавлено", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun addLessons() {
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                lessons.forEach { text ->
+                    db.trainingItemDao().insert(
+                        TrainingItem(modelId = modelId, type = TrainingItem.TYPE_TEXT, content = text)
+                    )
+                }
+                ModelTrainingSync.sync(db, modelId)
+            }
+            Toast.makeText(this@BashTrainActivity, "Уроки Bash добавлены, модель обновлена", Toast.LENGTH_LONG).show()
+        }
+    }
+}

@@ -2,6 +2,7 @@ package ru.hyperplanet.lmodel.studio.ml
 
 import android.content.Context
 import ru.hyperplanet.lmodel.studio.data.AppDatabase
+import ru.hyperplanet.lmodel.studio.data.update
 import java.io.File
 
 /**
