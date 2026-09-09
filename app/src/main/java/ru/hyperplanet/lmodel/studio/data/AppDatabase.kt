@@ -7,17 +7,23 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [
-        Chat::class, Message::class, ModelEntity::class, ModelParameter::class,
-        TrainingItem::class, RagBotEntity::class, ModelUnion::class, UnionMessage::class
+        ModelEntity::class,
+        ModelParameter::class,
+        TrainingItem::class,
+        Chat::class,
+        Message::class,
+        RagBotEntity::class,
+        ModelUnion::class,
+        UnionMessage::class
     ],
-    version = 6,
+    version = 7,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun chatDao(): ChatDao
     abstract fun modelDao(): ModelDao
     abstract fun modelParameterDao(): ModelParameterDao
     abstract fun trainingItemDao(): TrainingItemDao
+    abstract fun chatDao(): ChatDao
     abstract fun messageDao(): MessageDao
     abstract fun ragBotDao(): RagBotDao
     abstract fun modelUnionDao(): ModelUnionDao
@@ -31,10 +37,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "lmodel_studio.db"
-                )
-                    .fallbackToDestructiveMigration()
-                    .build()
-                    .also { INSTANCE = it }
+                ).fallbackToDestructiveMigration().build().also { INSTANCE = it }
             }
         }
     }

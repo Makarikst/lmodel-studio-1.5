@@ -7,7 +7,7 @@ import ru.hyperplanet.lmodel.studio.data.ModelParameter
 import ru.hyperplanet.lmodel.studio.databinding.ItemParameterBinding
 
 class ParameterAdapter(
-    private val onEdit: (position: Int, parameter: ModelParameter) -> Unit
+    private val onClick: (ModelParameter) -> Unit
 ) : RecyclerView.Adapter<ParameterAdapter.ParamViewHolder>() {
 
     private val items = mutableListOf<ModelParameter>()
@@ -17,8 +17,6 @@ class ParameterAdapter(
         items.addAll(parameters)
         notifyDataSetChanged()
     }
-
-    fun currentList(): List<ModelParameter> = items.toList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ParamViewHolder {
         val binding = ItemParameterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -38,10 +36,8 @@ class ParameterAdapter(
             binding.tvParamKey.text = param.key
             binding.tvParamValue.text = param.value
             binding.btnDeleteParam.visibility = android.view.View.GONE
-            binding.btnEditParam.setOnClickListener {
-                val pos = bindingAdapterPosition
-                if (pos != RecyclerView.NO_POSITION) onEdit(pos, items[pos])
-            }
+            binding.btnEditParam.setOnClickListener { onClick(param) }
+            binding.root.setOnClickListener { onClick(param) }
         }
     }
 }

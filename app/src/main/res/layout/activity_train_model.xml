@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
@@ -43,7 +42,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:text="Файлы: текст, изображения, видео, аудио"
+        android:text="Датасет / файлы (как текст)"
         android:textColor="@color/text_secondary"
         android:textStyle="bold" />
 
@@ -51,9 +50,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="Прикрепи файл, опиши его и сохрани"
+        android:text="json, csv, parquet, arrow, text, zip (imagefolder/soundfolder/webdataset). Всё идёт в обучение как текст."
         android:textColor="@color/text_hint"
         android:textSize="12sp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnImportDataset"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Загрузить датасет"
+        android:textAllCaps="false"
+        app:backgroundTint="@color/purple_700"
+        app:cornerRadius="12dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -78,7 +87,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_weight="1"
-            android:text="Изображение"
+            android:text="Фото"
             android:textAllCaps="false"
             android:textSize="12sp"
             app:backgroundTint="@color/purple_700"
@@ -124,7 +133,7 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/bg_card"
         android:gravity="top"
-        android:hint="Описание файла"
+        android:hint="Описание файла (для фото/аудио/видео)"
         android:inputType="textMultiLine"
         android:minLines="2"
         android:padding="12dp"

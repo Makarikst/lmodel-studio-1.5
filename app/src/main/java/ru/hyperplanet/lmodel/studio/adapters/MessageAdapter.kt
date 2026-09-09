@@ -18,7 +18,7 @@ class MessageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val expanded = mutableSetOf<String>()
 
     private fun keyOf(message: Message, position: Int): String {
-        return if (message.id > 0) "id_${message.id}" else "p${position}_${message.timestamp}_${message.isUser}"
+        return if (message.id > 0) "id_${message.id}" else "p${position}_${message.createdAt}_${message.isUser}"
     }
 
     fun submitList(messages: List<Message>) {

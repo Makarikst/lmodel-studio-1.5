@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fillViewport="true">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:padding="16dp">
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Обучение кодингу"
+            android:textColor="@color/text_primary" android:textSize="18sp" android:textStyle="bold"/>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Готовых уроков нет. Добавляй свои примеры под выбранные языки."
+            android:textColor="@color/text_secondary" android:textSize="13sp"/>
+        <TextView android:id="@+id/tvPreview" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="12dp" android:background="@drawable/bg_card" android:fontFamily="monospace"
+            android:padding="12dp" android:textColor="@color/text_primary" android:textSize="12sp"/>
+        <com.google.android.material.button.MaterialButton android:id="@+id/btnChangeLanguages"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp"
+            android:text="Изменить языки" android:textAllCaps="false"
+            app:backgroundTint="#333333" app:cornerRadius="12dp"/>
+        <com.google.android.material.button.MaterialButton android:id="@+id/btnAddCodingLessons"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp"
+            android:text="Добавить готовые уроки по коду" android:textAllCaps="false"
+            app:backgroundTint="@color/purple_500" app:cornerRadius="12dp"/>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="20dp" android:text="Свой пример"
+            android:textColor="@color/text_secondary" android:textStyle="bold"/>
+        <EditText android:id="@+id/etCustomCode" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" android:background="@drawable/bg_card" android:gravity="top"
+            android:hint="Пояснение + пример кода" android:inputType="textMultiLine"
+            android:minLines="6" android:padding="12dp" android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_hint" android:fontFamily="monospace"/>
+        <com.google.android.material.button.MaterialButton android:id="@+id/btnAddCustomCode"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp"
+            android:layout_marginBottom="24dp"
+            android:text="Добавить свой пример" android:textAllCaps="false"
+            app:backgroundTint="@color/purple_700" app:cornerRadius="12dp"/>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

@@ -1,31 +1,60 @@
 package ru.hyperplanet.lmodel.studio.data
 
-fun ModelDao.update(model: ModelEntity): Int =
-    updateFields(
-        model.id, model.name, model.supportsText, model.supportsPhoto,
-        model.supportsVideo, model.supportsAudio, model.isTrained,
-        model.trainedDataJson, model.apiKey, model.createdAt
-    )
+suspend fun ModelDao.update(model: ModelEntity): Int = updateFields(
+    id = model.id,
+    name = model.name,
+    kind = model.kind,
+    supportsText = model.supportsText,
+    supportsPhoto = model.supportsPhoto,
+    supportsVideo = model.supportsVideo,
+    supportsAudio = model.supportsAudio,
+    isTrained = model.isTrained,
+    trainedDataJson = model.trainedDataJson,
+    prologJson = model.prologJson,
+    apiKey = model.apiKey,
+    createdAt = model.createdAt
+)
 
-fun ModelDao.delete(model: ModelEntity): Int = deleteById(model.id)
+suspend fun ModelDao.delete(model: ModelEntity): Int = deleteById(model.id)
 
-fun ModelParameterDao.update(param: ModelParameter): Int =
-    updateFields(param.id, param.modelId, param.key, param.value)
+suspend fun ModelParameterDao.update(param: ModelParameter): Int = updateFields(
+    id = param.id,
+    modelId = param.modelId,
+    key = param.key,
+    value = param.value
+)
 
-fun ModelParameterDao.delete(param: ModelParameter): Int = deleteById(param.id)
+suspend fun ModelParameterDao.delete(param: ModelParameter): Int = deleteById(param.id)
 
-fun TrainingItemDao.delete(item: TrainingItem): Int = deleteById(item.id)
+suspend fun TrainingItemDao.delete(item: TrainingItem): Int = deleteById(item.id)
 
-fun RagBotDao.update(bot: RagBotEntity): Int =
-    updateFields(bot.id, bot.name, bot.description, bot.knowledgeJson, bot.createdAt)
+suspend fun ChatDao.update(chat: Chat): Int = updateFields(
+    id = chat.id,
+    name = chat.name,
+    systemPrompt = chat.systemPrompt,
+    modelId = chat.modelId,
+    allowAttachments = chat.allowAttachments,
+    allowedTypes = chat.allowedTypes,
+    lockedLanguage = chat.lockedLanguage,
+    sourceType = chat.sourceType,
+    ragBotId = chat.ragBotId,
+    languageSwitchAllowed = chat.languageSwitchAllowed,
+    createdAt = chat.createdAt
+)
 
-fun RagBotDao.delete(bot: RagBotEntity): Int = deleteById(bot.id)
+suspend fun ChatDao.delete(chat: Chat): Int = deleteById(chat.id)
 
-fun ChatDao.update(chat: Chat): Int =
-    updateFields(
-        chat.id, chat.name, chat.systemPrompt, chat.sourceType,
-        chat.modelId, chat.ragBotId, chat.allowAttachments, chat.allowedTypes,
-        chat.lockedLanguage, chat.createdAt
-    )
+suspend fun MessageDao.delete(message: Message): Int = deleteById(message.id)
 
-fun ChatDao.delete(chat: Chat): Int = deleteById(chat.id)
+suspend fun RagBotDao.update(bot: RagBotEntity): Int = updateFields(
+    id = bot.id,
+    name = bot.name,
+    description = bot.description,
+    knowledgeJson = bot.knowledgeJson
+)
+
+suspend fun RagBotDao.delete(bot: RagBotEntity): Int = deleteById(bot.id)
+
+suspend fun ModelUnionDao.delete(union: ModelUnion): Int = deleteById(union.id)
+
+suspend fun UnionMessageDao.delete(msg: UnionMessage): Int = deleteById(msg.id)

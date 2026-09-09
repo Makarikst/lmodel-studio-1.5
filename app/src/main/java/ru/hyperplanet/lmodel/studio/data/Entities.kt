@@ -9,6 +9,8 @@ import androidx.room.PrimaryKey
 data class ModelEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
+    /** "model" — думающая модель; "rag" — RAG-бот */
+    val kind: String = KIND_MODEL,
     val supportsText: Boolean = true,
     val supportsPhoto: Boolean = false,
     val supportsVideo: Boolean = false,
@@ -16,12 +18,54 @@ data class ModelEntity(
     val isTrained: Boolean = false,
     val trainedDataJson: String? = null,
     val apiKey: String? = null,
+    /** Prolog facts/rules JSON (optional) */
+    val prologJson: String? = null,
+    val createdAt: Long = System.currentTimeMillis()
+) {
+    companion object {
+        const val KIND_MODEL = "model"
+        const val KIND_RAG = "rag"
+    }
+}
+
+@Entity(tableName = "rag_bots")
+data class RagBotEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val name: String,
+    val description: String? = null,
+    val knowledgeJson: String? = null,
     val createdAt: Long = System.currentTimeMillis()
 )
 
+@Entity(tableName = "model_unions")
+data class ModelUnion(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val name: String,
+    val modelIdA: Long,
+    val modelIdB: Long,
+    val topic: String = "",
+    val createdAt: Long = System.currentTimeMillis()
+)
+
+@Entity(tableName = "union_messages")
+data class UnionMessage(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val unionId: Long,
+    val speaker: Int,          // 0 = модель A, 1 = модель B
+    val modelId: Long,
+    val modelName: String,
+    val text: String,
+    val reasoning: String? = null,
+    val createdAt: Long = System.currentTimeMillis()
+)
 @Entity(
     tableName = "model_parameters",
-    foreignKeys = [ForeignKey(entity = ModelEntity::class, parentColumns = ["id"], childColumns = ["modelId"], onDelete = ForeignKey.CASCADE)],
+    foreignKeys = [ForeignKey(
+        entity = ModelEntity::class,
+        parentColumns = ["id"],
+        childColumns = ["modelId"],
+        onDelete = ForeignKey.CASCADE
+    )],
     indices = [Index("modelId")]
 )
 data class ModelParameter(
@@ -33,60 +77,75 @@ data class ModelParameter(
 
 @Entity(
     tableName = "training_items",
-    foreignKeys = [ForeignKey(entity = ModelEntity::class, parentColumns = ["id"], childColumns = ["modelId"], onDelete = ForeignKey.CASCADE)],
+    foreignKeys = [ForeignKey(
+        entity = ModelEntity::class,
+        parentColumns = ["id"],
+        childColumns = ["modelId"],
+        onDelete = ForeignKey.CASCADE
+    )],
     indices = [Index("modelId")]
 )
 data class TrainingItem(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val modelId: Long,
+    /** text | prolog | image | audio | video | document | tabular | geospatial | timeseries | mesh3d | other */
     val type: String,
+    /** Подпись / текст / описание / извлечённое содержимое */
     val content: String,
-    val addedAt: Long = System.currentTimeMillis(),
+    /** Путь к медиафайлу на устройстве (если есть) */
     val mediaPath: String? = null,
-    val analysisText: String? = null,
+    /** Исходное имя файла в датасете */
     val originalName: String? = null,
+    /** Краткий автоанализ (метаданные) */
+    val analysisText: String? = null,
+    val createdAt: Long = System.currentTimeMillis()
 ) {
     companion object {
-        const val TYPE_TEXT = "TEXT"
-        const val TYPE_PROLOG = "PROLOG"
-        const val TYPE_PHOTO = "PHOTO"
-        const val TYPE_VIDEO = "VIDEO"
-        const val TYPE_AUDIO = "AUDIO"
-        const val TYPE_FILE = "FILE"
+        const val TYPE_TEXT = "text"
+        const val TYPE_PROLOG = "prolog"
+        const val TYPE_IMAGE = "image"
+        const val TYPE_AUDIO = "audio"
+        const val TYPE_VIDEO = "video"
+        const val TYPE_DOCUMENT = "document"
+        const val TYPE_TABULAR = "tabular"
+        const val TYPE_GEOSPATIAL = "geospatial"
+        const val TYPE_TIMESERIES = "timeseries"
+        const val TYPE_MESH3D = "mesh3d"
+        const val TYPE_OTHER = "other"
     }
 }
 
-@Entity(tableName = "rag_bots")
-data class RagBotEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val name: String,
-    val description: String = "",
-    val knowledgeJson: String = "[]",
-    val createdAt: Long = System.currentTimeMillis()
-)
-
-@Entity(tableName = "chats", indices = [Index("modelId"), Index("ragBotId")])
+@Entity(tableName = "chats")
 data class Chat(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
-    val systemPrompt: String,
-    val sourceType: String = SOURCE_MODEL,
-    val modelId: Long = 0,
-    val ragBotId: Long = 0,
+    val systemPrompt: String = "",
+    val modelId: Long,
     val allowAttachments: Boolean = false,
     val allowedTypes: String = "",
     val lockedLanguage: String? = null,
+    /** SOURCE_MODEL или SOURCE_RAG */
+    val sourceType: String = SOURCE_MODEL,
+    /** ID RAG-бота, если sourceType == SOURCE_RAG */
+    val ragBotId: Long = 0,
+    val languageSwitchAllowed: Boolean = false,
     val createdAt: Long = System.currentTimeMillis()
 ) {
     companion object {
-        const val SOURCE_MODEL = "MODEL"
-        const val SOURCE_RAG = "RAG"
+        const val SOURCE_MODEL = "model"
+        const val SOURCE_RAG = "rag"
     }
 }
 
+
 @Entity(
     tableName = "messages",
-    foreignKeys = [ForeignKey(entity = Chat::class, parentColumns = ["id"], childColumns = ["chatId"], onDelete = ForeignKey.CASCADE)],
+    foreignKeys = [ForeignKey(
+        entity = Chat::class,
+        parentColumns = ["id"],
+        childColumns = ["chatId"],
+        onDelete = ForeignKey.CASCADE
+    )],
     indices = [Index("chatId")]
 )
 data class Message(
@@ -94,42 +153,8 @@ data class Message(
     val chatId: Long,
     val isUser: Boolean,
     val text: String,
-    val attachmentPath: String? = null,
     val reasoning: String? = null,
     val promptTokens: Int = 0,
     val completionTokens: Int = 0,
-    val timestamp: Long = System.currentTimeMillis()
-)
-
-/** Объединение двух моделей (Beta): диалог модель↔модель */
-@Entity(tableName = "model_unions")
-data class ModelUnion(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val name: String,
-    val modelIdA: Long,
-    val modelIdB: Long,
-    val topic: String = "",
     val createdAt: Long = System.currentTimeMillis()
-)
-
-@Entity(
-    tableName = "union_messages",
-    foreignKeys = [ForeignKey(
-        entity = ModelUnion::class,
-        parentColumns = ["id"],
-        childColumns = ["unionId"],
-        onDelete = ForeignKey.CASCADE
-    )],
-    indices = [Index("unionId")]
-)
-data class UnionMessage(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val unionId: Long,
-    /** 0 = model A, 1 = model B */
-    val speaker: Int,
-    val modelId: Long,
-    val modelName: String,
-    val text: String,
-    val reasoning: String? = null,
-    val timestamp: Long = System.currentTimeMillis()
 )

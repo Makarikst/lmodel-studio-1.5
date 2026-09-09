@@ -30,7 +30,7 @@ object MarkovTrainer {
         val trigrams = mutableMapOf<String, MutableMap<String, Int>>()
         val unigrams = mutableMapOf<String, Int>()
 
-        for (text in texts) {
+        for (text in texts.take(3000)) {
             val cleaned = text.trim()
             if (cleaned.isBlank()) continue
             val parts = cleaned.split(Regex("(?<=[.!?…])\\s+|[\\n\\r]+")).map { it.trim() }.filter { it.length >= 2 }
@@ -61,15 +61,23 @@ object MarkovTrainer {
         }
         val limited = sentences.take(2000)
         val limitedIndex = inverted.mapValues { (_, v) -> v.filter { it < limited.size } }.filter { it.value.isNotEmpty() }
+        val vocabLimited = vocab.toList().take(8000).toSet()
+        val bigramsLimited = bigrams.entries.take(8000).associate { (k, v) ->
+            k to v.entries.sortedByDescending { e -> e.value }.take(12).associate { it.key to it.value }
+        }
+        val trigramsLimited = trigrams.entries.take(4000).associate { (k, v) ->
+            k to v.entries.sortedByDescending { e -> e.value }.take(8).associate { it.key to it.value }
+        }
+        val unigramsLimited = unigrams.entries.sortedByDescending { it.value }.take(8000).associate { it.key to it.value }
         return TrainedData(
             sentences = limited,
-            invertedIndex = limitedIndex,
-            vocabulary = vocab,
-            prologSource = prologTexts.map { it.trim() }.filter { it.isNotEmpty() },
+            invertedIndex = limitedIndex.mapValues { (_, v) -> v.take(50) }.filter { it.value.isNotEmpty() },
+            vocabulary = vocabLimited,
+            prologSource = prologTexts.map { it.trim() }.filter { it.isNotEmpty() }.take(200),
             compiledPrologJson = compiledPrologJson,
-            bigrams = bigrams.mapValues { it.value.toMap() },
-            trigrams = trigrams.mapValues { it.value.toMap() },
-            unigrams = unigrams.toMap()
+            bigrams = bigramsLimited,
+            trigrams = trigramsLimited,
+            unigrams = unigramsLimited
         )
     }
 

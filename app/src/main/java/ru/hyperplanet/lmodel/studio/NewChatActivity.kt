@@ -79,10 +79,18 @@ class NewChatActivity : AppCompatActivity() {
         if (useModel && selectedModel == null) { Toast.makeText(this, R.string.error_model_required, Toast.LENGTH_SHORT).show(); return }
         if (!useModel && selectedRag == null) { Toast.makeText(this, R.string.error_rag_required, Toast.LENGTH_SHORT).show(); return }
         lifecycleScope.launch(Dispatchers.IO) {
+            val src = if (useModel) Chat.SOURCE_MODEL else Chat.SOURCE_RAG
+            val mid = if (useModel) (selectedModel?.id ?: 0L) else 0L
+            val rid = if (!useModel) (selectedRag?.id ?: 0L) else 0L
+            if (!useModel && rid <= 0L) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@NewChatActivity, "RAG не выбран", Toast.LENGTH_LONG).show()
+                }
+                return@launch
+            }
             val id = db.chatDao().insert(Chat(
                 name = name, systemPrompt = systemPrompt,
-                sourceType = if (useModel) Chat.SOURCE_MODEL else Chat.SOURCE_RAG,
-                modelId = selectedModel?.id ?: 0, ragBotId = selectedRag?.id ?: 0
+                sourceType = src, modelId = mid, ragBotId = rid
             ))
             withContext(Dispatchers.Main) {
                 startActivity(android.content.Intent(this@NewChatActivity, ChatActivity::class.java).putExtra(MainActivity.EXTRA_CHAT_ID, id))

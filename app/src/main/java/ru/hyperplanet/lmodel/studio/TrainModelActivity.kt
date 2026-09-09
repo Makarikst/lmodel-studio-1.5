@@ -14,164 +14,201 @@ import ru.hyperplanet.lmodel.studio.adapters.TrainingItemAdapter
 import ru.hyperplanet.lmodel.studio.data.AppDatabase
 import ru.hyperplanet.lmodel.studio.data.TrainingItem
 import ru.hyperplanet.lmodel.studio.databinding.ActivityTrainModelBinding
-import ru.hyperplanet.lmodel.studio.ml.ModelRemoteSync.buildForModel
-import ru.hyperplanet.lmodel.studio.ml.ModelTrainingSync
-import ru.hyperplanet.lmodel.studio.util.MediaFileAnalyzer
+import ru.hyperplanet.lmodel.studio.ml.InferenceEngine
+import ru.hyperplanet.lmodel.studio.ml.MarkovTrainer
+import ru.hyperplanet.lmodel.studio.util.DatasetImporter
 
 class TrainModelActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivityTrainModelBinding
-    private val db by lazy { AppDatabase.getInstance(this) }
-    private var modelId = -1L
-    private lateinit var adapter: TrainingItemAdapter
+    private val db by lazy { AppDatabase.getInstance(applicationContext) }
+    private var modelId: Long = -1L
+    private lateinit var trainingAdapter: TrainingItemAdapter
 
-    private var pendingUri: Uri? = null
-    private var pendingResult: MediaFileAnalyzer.Result? = null
-    private var pickMode = MediaFileAnalyzer.Kind.TEXT
-
-    private val openDoc = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-        if (uri != null) onPicked(uri)
+    private val openDataset = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        if (uri == null) return@registerForActivityResult
+        modelId = SessionIds.getModel(this)
+        if (modelId <= 0L) {
+            Toast.makeText(this, "Нет modelId", Toast.LENGTH_LONG).show()
+            return@registerForActivityResult
+        }
+        // take persistable if possible
+        try {
+            contentResolver.takePersistableUriPermission(
+                uri,
+                android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
+            )
+        } catch (_: Throwable) { }
+        importDataset(uri)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityTrainModelBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        title = getString(R.string.title_train_model)
-        modelId = intent.getLongExtra(MainActivity.EXTRA_MODEL_ID, -1)
-        if (modelId == -1L) { finish(); return }
+        try {
+            binding = ActivityTrainModelBinding.inflate(layoutInflater)
+            setContentView(binding.root)
+        } catch (t: Throwable) {
+            Toast.makeText(this, "layout: ${t.message}", Toast.LENGTH_LONG).show()
+            finish()
+            return
+        }
 
-        adapter = TrainingItemAdapter(onDelete = { item ->
+        val fromIntent = intent.getLongExtra(MainActivity.EXTRA_MODEL_ID, -1L)
+        if (fromIntent > 0L) SessionIds.setModel(this, fromIntent)
+        modelId = SessionIds.getModel(this)
+        if (modelId <= 0L) {
+            Toast.makeText(this, "Сначала сохрани модель", Toast.LENGTH_LONG).show()
+            finish()
+            return
+        }
+
+        trainingAdapter = TrainingItemAdapter(onDelete = { item ->
             lifecycleScope.launch(Dispatchers.IO) {
-                db.trainingItemDao().deleteById(item.id)
-                val cleared = ModelTrainingSync.clearIfEmpty(db, modelId)
-                if (!cleared) ModelTrainingSync.sync(db, modelId)
-                withContext(Dispatchers.Main) {
-                    if (cleared) Toast.makeText(this@TrainModelActivity, "Данных нет — модель не обучена", Toast.LENGTH_LONG).show()
-                }
+                try { db.trainingItemDao().deleteById(item.id) } catch (_: Throwable) { }
+                reloadPreview()
             }
         })
         binding.rvTrainingItems.layoutManager = LinearLayoutManager(this)
-        binding.rvTrainingItems.adapter = adapter
-        db.trainingItemDao().observeForModel(modelId).observe(this) { adapter.submitList(it) }
+        binding.rvTrainingItems.adapter = trainingAdapter
 
-        binding.btnAddText.setOnClickListener { addPlainText() }
-        binding.btnStartTraining.setOnClickListener { startTraining() }
+        // НЕ подписываемся на LiveData всего датасета — только разовый preview
+        reloadPreview()
 
-        binding.btnAddFile.setOnClickListener {
-            pickMode = MediaFileAnalyzer.Kind.TEXT
-            openDoc.launch(arrayOf("*/*"))
-        }
-        binding.btnAddPhoto.setOnClickListener {
-            pickMode = MediaFileAnalyzer.Kind.PHOTO
-            openDoc.launch(arrayOf("image/*"))
-        }
-        binding.btnAddAudio.setOnClickListener {
-            pickMode = MediaFileAnalyzer.Kind.AUDIO
-            openDoc.launch(arrayOf("audio/*"))
-        }
-        binding.btnAddVideo.setOnClickListener {
-            pickMode = MediaFileAnalyzer.Kind.VIDEO
-            openDoc.launch(arrayOf("video/*"))
-        }
-        binding.btnSaveMedia.setOnClickListener { savePendingMedia() }
-    }
-
-    private fun onPicked(uri: Uri) {
-        lifecycleScope.launch {
-            try {
-                contentResolver.takePersistableUriPermission(
-                    uri, android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
-                )
-            } catch (_: Exception) { }
-            try {
-                val result = withContext(Dispatchers.IO) {
-                    MediaFileAnalyzer.ingest(this@TrainModelActivity, uri)
+        binding.btnAddText.setOnClickListener {
+            val text = binding.etTrainingText.text?.toString()?.trim().orEmpty()
+            if (text.isEmpty()) return@setOnClickListener
+            val mid = modelId
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    db.trainingItemDao().insert(
+                        TrainingItem(modelId = mid, type = TrainingItem.TYPE_TEXT, content = text.take(800))
+                    )
+                    withContext(Dispatchers.Main) {
+                        binding.etTrainingText.setText("")
+                        Toast.makeText(this@TrainModelActivity, "Добавлено", Toast.LENGTH_SHORT).show()
+                    }
+                    reloadPreview()
+                } catch (t: Throwable) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(this@TrainModelActivity, "add: ${t.message}", Toast.LENGTH_LONG).show()
+                    }
                 }
-                pendingUri = uri
-                pendingResult = result
-                binding.tvPendingFile.text = "Выбрано: ${result.displayName} (${result.kind})\n${result.analysis}"
-                Toast.makeText(this@TrainModelActivity, "Добавь описание и нажми «Сохранить»", Toast.LENGTH_SHORT).show()
-            } catch (e: Exception) {
-                Toast.makeText(this@TrainModelActivity, e.message ?: "Ошибка файла", Toast.LENGTH_LONG).show()
+            }
+        }
+
+        try {
+            binding.btnImportDataset.setOnClickListener {
+                SessionIds.setModel(this, modelId)
+                openDataset.launch("*/*")
+            }
+        } catch (_: Throwable) { }
+
+        binding.btnStartTraining.setOnClickListener { startTraining() }
+    }
+
+    private fun reloadPreview() {
+        val mid = modelId
+        if (mid <= 0L) return
+        lifecycleScope.launch(Dispatchers.IO) {
+            val count = try { db.trainingItemDao().countForModel(mid) } catch (_: Throwable) { 0 }
+            val preview = try {
+                db.trainingItemDao().getSampleForModel(mid, 30)
+            } catch (_: Throwable) {
+                emptyList()
+            }
+            withContext(Dispatchers.Main) {
+                try {
+                    trainingAdapter.submitList(preview)
+                    title = "Обучение · $count"
+                } catch (_: Throwable) { }
             }
         }
     }
 
-    private fun savePendingMedia() {
-        val result = pendingResult
-        if (result == null) {
-            Toast.makeText(this, "Сначала выбери файл", Toast.LENGTH_SHORT).show()
-            return
-        }
-        val desc = binding.etMediaDescription.text?.toString()?.trim().orEmpty()
-        if (desc.isEmpty() && result.kind != MediaFileAnalyzer.Kind.TEXT) {
-            Toast.makeText(this, "Опиши файл — так модель поймёт, что это", Toast.LENGTH_LONG).show()
-            return
-        }
-        val type = when (result.kind) {
-            MediaFileAnalyzer.Kind.PHOTO -> TrainingItem.TYPE_PHOTO
-            MediaFileAnalyzer.Kind.VIDEO -> TrainingItem.TYPE_VIDEO
-            MediaFileAnalyzer.Kind.AUDIO -> TrainingItem.TYPE_AUDIO
-            MediaFileAnalyzer.Kind.TEXT -> TrainingItem.TYPE_FILE
-            MediaFileAnalyzer.Kind.OTHER -> TrainingItem.TYPE_FILE
-        }
-        val content = if (result.kind == MediaFileAnalyzer.Kind.TEXT || result.kind == MediaFileAnalyzer.Kind.OTHER) {
-            MediaFileAnalyzer.trainingBlob(desc, result)
-        } else {
-            desc
-        }
+    private fun importDataset(uri: Uri) {
+        val mid = modelId
+        Toast.makeText(this, "Импорт…", Toast.LENGTH_SHORT).show()
         lifecycleScope.launch(Dispatchers.IO) {
-            db.trainingItemDao().insert(
-                TrainingItem(
-                    modelId = modelId,
-                    type = type,
-                    content = content,
-                    mediaPath = result.savedFile.absolutePath,
-                    analysisText = result.analysis,
-                    originalName = result.displayName
+            var saved = 0
+            val note = try {
+                DatasetImporter.importStreaming(
+                    context = applicationContext,
+                    uri = uri,
+                    onBatch = { batch ->
+                        // синхронно на IO-потоке, без runBlocking
+                        for (e in batch) {
+                            try {
+                                // insert suspend — нужен runBlocking только здесь
+                                kotlinx.coroutines.runBlocking {
+                                    db.trainingItemDao().insert(
+                                        TrainingItem(
+                                            modelId = mid,
+                                            type = e.type,
+                                            content = e.content,
+                                            mediaPath = null,
+                                            originalName = e.originalName,
+                                            analysisText = null
+                                        )
+                                    )
+                                }
+                                saved++
+                            } catch (_: Throwable) { }
+                        }
+                    }
                 )
-            )
-            ModelTrainingSync.sync(db, modelId)
-            withContext(Dispatchers.Main) {
-                pendingResult = null
-                pendingUri = null
-                binding.tvPendingFile.text = ""
-                binding.etMediaDescription.setText("")
-                Toast.makeText(this@TrainModelActivity, "Сохранено в обучение", Toast.LENGTH_SHORT).show()
+            } catch (t: Throwable) {
+                "crash: ${t.javaClass.simpleName}: ${t.message} saved=$saved"
             }
-        }
-    }
 
-    private fun addPlainText() {
-        val t = binding.etTrainingText.text?.toString()?.trim().orEmpty()
-        if (t.isEmpty()) {
-            Toast.makeText(this, R.string.error_empty_text, Toast.LENGTH_SHORT).show()
-            return
-        }
-        lifecycleScope.launch(Dispatchers.IO) {
-            db.trainingItemDao().insert(TrainingItem(modelId = modelId, type = TrainingItem.TYPE_TEXT, content = t))
-            ModelTrainingSync.sync(db, modelId)
+            // принудительно GC после крупного файла
+            try { System.gc() } catch (_: Throwable) { }
+
             withContext(Dispatchers.Main) {
-                binding.etTrainingText.setText("")
-                Toast.makeText(this@TrainModelActivity, R.string.toast_text_added, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@TrainModelActivity, "$note · saved=$saved", Toast.LENGTH_LONG).show()
             }
+            reloadPreview()
         }
     }
 
     private fun startTraining() {
+        val mid = modelId
         lifecycleScope.launch {
-            val status = withContext(Dispatchers.IO) { ModelTrainingSync.sync(db, modelId) }
-            if (!status.isTrained) {
-                Toast.makeText(this@TrainModelActivity, "Нет данных для обучения", Toast.LENGTH_LONG).show()
-                return@launch
+            try {
+                val sample = withContext(Dispatchers.IO) {
+                    try {
+                        db.trainingItemDao().getSampleForModel(mid, 2000)
+                    } catch (_: Throwable) {
+                        emptyList()
+                    }
+                }
+                if (sample.isEmpty()) {
+                    Toast.makeText(this@TrainModelActivity, "Нет данных", Toast.LENGTH_LONG).show()
+                    return@launch
+                }
+                val corpus = sample.map { it.content }.filter { it.isNotBlank() }
+                val trained = withContext(Dispatchers.Default) {
+                    MarkovTrainer.train(texts = corpus, prologTexts = emptyList())
+                }
+                val json = InferenceEngine.serializeTrained(trained)
+                val safeJson = if (json.length > 1_000_000) json.take(1_000_000) else json
+                withContext(Dispatchers.IO) {
+                    db.modelDao().updateTrained(
+                        id = mid,
+                        isTrained = true,
+                        trainedDataJson = safeJson,
+                        supportsPhoto = false,
+                        supportsAudio = false,
+                        supportsVideo = false
+                    )
+                }
+                Toast.makeText(
+                    this@TrainModelActivity,
+                    "Обучено ${sample.size} · vocab ${trained.vocabulary.size}",
+                    Toast.LENGTH_LONG
+                ).show()
+            } catch (t: Throwable) {
+                Toast.makeText(this@TrainModelActivity, "Train: ${t.message}", Toast.LENGTH_LONG).show()
             }
-            Toast.makeText(
-                this@TrainModelActivity,
-                "Обучено: текстов/файлов ${status.textCount},  prolog ${status.prologCount}, слов ${status.vocabSize}",
-                Toast.LENGTH_LONG
-            ).show()
-            withContext(Dispatchers.IO) { buildForModel(this@TrainModelActivity, modelId = modelId)
-             }
         }
     }
 }

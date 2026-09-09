@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.hyperplanet.lmodel.studio.adapters.UnionMessageAdapter
 import ru.hyperplanet.lmodel.studio.data.AppDatabase
+import ru.hyperplanet.lmodel.studio.data.AppDatabase.*
 import ru.hyperplanet.lmodel.studio.data.ModelUnion
 import ru.hyperplanet.lmodel.studio.data.UnionMessage
 import ru.hyperplanet.lmodel.studio.databinding.ActivityUnionChatBinding

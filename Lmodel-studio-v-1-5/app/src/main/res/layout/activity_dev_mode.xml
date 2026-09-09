@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fillViewport="true">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:padding="16dp">
+
+        <TextView android:id="@+id/tvModelInfo" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:background="@drawable/bg_card" android:padding="12dp" android:textColor="@color/text_primary" android:textSize="13sp" />
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp"
+            android:text="@string/label_export" android:textColor="@color/text_secondary" android:textStyle="bold" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/btnExportOnnx"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp"
+            android:text="@string/btn_export_onnx_tflite" android:textAllCaps="false" android:textColor="@color/text_on_dark"
+            app:backgroundTint="@color/purple_500" app:cornerRadius="12dp" />
+        <TextView android:id="@+id/tvExportStatus" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" android:fontFamily="monospace" android:textColor="@color/text_secondary" android:textSize="12sp" />
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp"
+            android:text="@string/label_api" android:textColor="@color/text_secondary" android:textStyle="bold" />
+
+        <TextView android:id="@+id/tvApiKeyLabel" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="12dp" android:text="API-ключ (свой или сгенерировать)"
+            android:textColor="@color/text_secondary" android:textStyle="bold" />
+        <EditText android:id="@+id/etApiKey" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:background="@drawable/bg_card" android:hint="lms_..." android:inputType="textVisiblePassword"
+            android:padding="12dp" android:textColor="@color/text_primary" android:textColorHint="@color/text_hint"
+            android:fontFamily="monospace" android:textSize="13sp" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:layout_marginTop="8dp">
+            <com.google.android.material.button.MaterialButton android:id="@+id/btnGenerateApiKey"
+                android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:text="Сгенерировать ключ" android:textAllCaps="false"
+                app:backgroundTint="@color/purple_700" app:cornerRadius="12dp" />
+            <com.google.android.material.button.MaterialButton android:id="@+id/btnSaveApiKey"
+                android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="Сохранить ключ" android:textAllCaps="false"
+                app:backgroundTint="@color/purple_500" app:cornerRadius="12dp" />
+        </LinearLayout>
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="12dp" android:text="Локальный API — только на этом телефоне (127.0.0.1)"
+            android:textColor="@color/text_hint" android:textSize="12sp" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/btnStartApi"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp"
+            android:text="@string/btn_start_local_api" android:textAllCaps="false" android:textColor="@color/text_on_dark"
+            app:backgroundTint="@color/purple_500" app:cornerRadius="12dp" />
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="У каждой модели свой model.json. Кнопка ниже соберёт готовый пакет для PAW/VPS автоматически."
+            android:textColor="@color/text_hint" android:textSize="12sp" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/btnDeployRemoteApi"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp"
+            android:text="@string/btn_deploy_remote_api" android:textAllCaps="false" android:textColor="@color/text_on_dark"
+            app:backgroundTint="@color/purple_700" app:cornerRadius="12dp" />
+
+        <TextView android:id="@+id/tvApiStatus" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" android:textColor="@color/text_secondary" android:textSize="13sp" />
+        <TextView android:id="@+id/tvApiClient" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" android:background="@drawable/bg_card" android:fontFamily="monospace"
+            android:padding="10dp" android:textColor="@color/text_secondary" android:textSize="11sp" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/btnCopyClient"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp"
+            android:text="@string/btn_copy_client" android:textAllCaps="false" app:backgroundTint="#333333" app:cornerRadius="12dp" />
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp"
+            android:text="@string/label_probe" android:textColor="@color/text_secondary" android:textStyle="bold" />
+        <EditText android:id="@+id/etProbe" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" android:background="@drawable/bg_card" android:hint="@string/hint_probe"
+            android:inputType="text" android:padding="12dp" android:textColor="@color/text_primary" android:textColorHint="@color/text_hint" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/btnProbe"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp"
+            android:text="@string/btn_probe" android:textAllCaps="false" app:backgroundTint="@color/purple_500" app:cornerRadius="12dp" />
+        <TextView android:id="@+id/tvProbeAnswer" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="12dp" android:textColor="@color/text_primary" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp"
+            android:text="@string/label_reasoning" android:textColor="@color/text_secondary" android:textStyle="bold" />
+        <TextView android:id="@+id/tvProbeReasoning" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="4dp" android:background="@drawable/bg_card" android:fontFamily="monospace"
+            android:padding="10dp" android:textColor="@color/text_secondary" android:textSize="11sp" />
+        <TextView android:id="@+id/tvProbeTokens" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" android:layout_marginBottom="24dp" android:textColor="@color/text_hint" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

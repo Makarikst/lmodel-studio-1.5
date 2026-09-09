@@ -8,10 +8,11 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import ru.hyperplanet.lmodel.studio.data.AppDatabase
+import ru.hyperplanet.lmodel.studio.data.AppDatabase.*
 import ru.hyperplanet.lmodel.studio.data.ModelEntity
 import ru.hyperplanet.lmodel.studio.data.ModelUnion
 import ru.hyperplanet.lmodel.studio.databinding.ActivityNewUnionBinding
+import ru.hyperplanet.lmodel.studio.data.AppDatabase
 
 class NewUnionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNewUnionBinding

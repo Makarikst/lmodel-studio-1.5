@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_500">#9B7EDE</color>
+    <color name="purple_700">#7B5CB8</color>
+    <color name="background">#000000</color>
+    <color name="surface">#1A1A1A</color>
+    <color name="surface_elevated">#2A2A2A</color>
+    <color name="bubble_user">#7B5CB8</color>
+    <color name="bubble_bot">#2A2A2A</color>
+    <color name="text_on_dark">#FFFFFF</color>
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#C8C5D0</color>
+    <color name="text_hint">#8A8790</color>
+    <color name="danger">#F2B8B5</color>
+    <color name="stroke">#3A3A3A</color>
+</resources>
