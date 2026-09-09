@@ -126,10 +126,15 @@ object InferenceEngine {
             return GenerationResult(ans, log.toString().trim(), promptTokens, countTokens(ans))
         }
 
-        step("5. Поиск по корпусу")
+        step("5. Перевод / поиск по корпусу")
+        tryTranslateFromCorpus(data, userMessage)?.let { tr ->
+            line("Найден перевод: $tr")
+            return GenerationResult(tr, log.toString().trim(), promptTokens, countTokens(tr))
+        }
         val terms = MarkovTrainer.tokenizeText(userMessage).filter { it.length >= 2 && it !in STOP }
         line("Ключевые слова: [${terms.joinToString(", ")}]")
         val facts = retrieve(data, terms, topK, temperature)
+            .mapNotNull { (text, score) -> cleanFact(text)?.let { it to score } }
         facts.forEachIndexed { i, f -> line("[$i] ${"%.2f".format(f.second)} «${f.first.take(90)}»") }
 
         step("6. Сборка ответа")
@@ -138,28 +143,18 @@ object InferenceEngine {
             else "В знаниях нет близких фрагментов."
             return GenerationResult(ans, log.toString().trim(), promptTokens, countTokens(ans))
         }
-        // maxWords from parameters above
         val brief = listOf("кратко", "короче", "brief").any { lower.contains(it) }
         val takeN = when {
             brief -> 1
             temperature >= 1.3f -> min(topK, facts.size)
-            temperature >= 0.8f -> min(3, facts.size)
-            else -> min(2, facts.size)
+            temperature >= 0.8f -> min(2, facts.size)
+            else -> 1
         }
         val selected = facts.take(takeN)
-        line("Берём ${selected.size} фрагмент(ов)")
-        val sb = StringBuilder()
-        var words = 0
-        selected.forEachIndexed { i, (text, _) ->
-            val piece = text.trim().trimEnd('.', '!', '?')
-            val add = countTokens(piece)
-            if (words + add > maxWords && sb.isNotEmpty()) return@forEachIndexed
-            if (i == 0) sb.append(piece.replaceFirstChar { it.titlecase() })
-            else sb.append(' ').append(piece.replaceFirstChar { it.lowercase() })
-            if (!piece.endsWith('.')) sb.append('.')
-            words += add
-        }
-        val answer = styleResponse(sb.toString().trim(), userMessage, maxWords)
+        line("Берём ${selected.size} очищенных фрагмент(ов)")
+        // Один цельный ответ, без склейки JSON-обломков в список
+        val best = selected.first().first.trim()
+        val answer = styleResponse(best, userMessage, maxWords)
         step("7. Итог")
         line("Слов: ${countTokens(answer)}, язык: ${LanguageLock.name(active)}, лимит слов: $maxWords")
         return GenerationResult(answer, log.toString().trim(), promptTokens, countTokens(answer))
@@ -215,8 +210,12 @@ object InferenceEngine {
 
         step("5. Сборка ответа")
         val answer = if (hits.isEmpty()) {
-            if (lock == LanguageLock.Lang.EN) "No matching documents in RAG knowledge base."
-            else "В базе знаний RAG-бота нет подходящих фрагментов."
+            // Нет точных совпадений — отдаём топ базы, чтобы бот не молчал
+            line("Точных совпадений нет — возвращаю первые фрагменты базы")
+            knowledgeChunks.take(3).joinToString("\n\n") { it.trim() }.ifBlank {
+                if (lock == LanguageLock.Lang.EN) "Knowledge base is empty."
+                else "База знаний пуста."
+            }
         } else {
             hits.joinToString("\n\n") { it.text.trim() }
         }
@@ -288,6 +287,68 @@ object InferenceEngine {
      * Структурирует ответ: коротко оставляет как есть; длинный — с заголовками/списками Markdown,
      * которые в чате рендерятся (жирный ≠ сырые звёздочки).
      */
+    private fun cleanFact(raw: String): String? {
+        var s = raw.trim()
+        if (s.isEmpty()) return null
+        // выкинуть явный JSON
+        if (s.startsWith("{") || s.startsWith("[")) {
+            try {
+                val obj = org.json.JSONObject(s)
+                val tr = obj.optString("translation", "").trim()
+                if (tr.isNotBlank() && !tr.startsWith("{")) return tr
+                for (k in listOf("text", "output", "answer", "response", "ru", "target")) {
+                    val v = obj.optString(k, "").trim()
+                    if (v.isNotBlank() && !v.startsWith("{")) return v
+                }
+            } catch (_: Exception) { }
+            // не отдаём сырой JSON пользователю
+            return null
+        }
+        // убрать префиксы "model": "Google Translate"
+        if (s.contains("\"model\"") && s.contains("translation")) {
+            val m = Regex("\"translation\"\\s*:\\s*\"((?:\\\\.|[^\"\\\\])*)\"").find(s)
+            if (m != null) return m.groupValues[1].replace("\\\"", "\"")
+            return null
+        }
+        return s
+    }
+
+    private fun tryTranslateFromCorpus(
+        data: MarkovTrainer.TrainedData,
+        userMessage: String
+    ): String? {
+        val q = userMessage.lowercase()
+        val isTranslate = listOf("translate", "перевод", "переведи", "по-русски", "на русский", "how to say")
+            .any { q.contains(it) }
+        if (!isTranslate) return null
+        // слово/фраза для перевода — последнее «слово» или в кавычках
+        val quoted = Regex("[«\"]([^»\"]+)[»\"]").find(userMessage)?.groupValues?.get(1)
+        val token = quoted ?: userMessage
+            .replace(Regex("(?i)translate\\s+to\\s+russian\\s*"), " ")
+            .replace(Regex("(?i)переведи\\s+(на\\s+русский\\s*)?"), " ")
+            .replace(Regex("(?i)как\\s+по-русски"), " ")
+            .trim()
+            .trim('?', '.', '!')
+            .lowercase()
+        if (token.length < 2) return null
+        // ищем фразы вида «token → перевод» или «token по-русски: ...»
+        for (sent in data.sentences) {
+            val low = sent.lowercase()
+            if (token !in low) continue
+            // формат нашего импортера
+            Regex("""→\s*([^\n]+)""").find(sent)?.groupValues?.get(1)?.trim()?.let { return it }
+            Regex("""по-русски:\s*([^\n]+)""", RegexOption.IGNORE_CASE).find(sent)?.groupValues?.get(1)?.trim()?.let { return it }
+            Regex("""—\s*([^\n]+)""").find(sent)?.groupValues?.get(1)?.trim()?.let { return it }
+            cleanFact(sent)?.let { cleaned ->
+                if (token !in cleaned.lowercase() || cleaned.length < 40) {
+                    // если в предложении только перевод
+                    if (!cleaned.contains("{")) return cleaned
+                }
+            }
+        }
+        return null
+    }
+
     private fun styleResponse(raw: String, userMessage: String, maxWords: Int): String {
         if (raw.isBlank()) return raw
         var text = raw.trim()
@@ -314,7 +375,7 @@ object InferenceEngine {
         }
         // разбить длинный абзац на пункты по предложениям
         val sentences = text.split(Regex("(?<=[.!?])\\s+")).map { it.trim() }.filter { it.isNotEmpty() }
-        if (sentences.size >= 3) {
+        if (sentences.size >= 3 && sentences.none { it.contains("{") || it.contains("") }) {
             return buildString {
                 appendLine("**Ответ**")
                 sentences.take(8).forEach { appendLine("- $it") }
@@ -322,11 +383,6 @@ object InferenceEngine {
         }
         return text
     }
-
-    /**
-     * Длина ответа выбирается по смыслу запроса (не всегда max_length).
-     * «кратко» → коротко; «подробно»/сложный вопрос → длиннее.
-     */
     private fun adaptiveMaxWords(userMessage: String, parameters: Map<String, String>): Int {
         val cap = parameters["max_length"]?.toIntOrNull()?.coerceIn(10, 500) ?: 120
         val q = userMessage.lowercase()

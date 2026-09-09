@@ -237,7 +237,13 @@ object DatasetImporter {
      *  {translation: {en:.., ru:..}} → ...
      */
     private fun phraseFromJsonObject(obj: JSONObject): String? {
-        // вложенный translation: { "translation": { "en": "...", "ru": "..." } }
+        // Google Translate style: { "model": "...", "translation": "text...", "verified": [...] }
+        val translationStr = obj.optString("translation", "").trim()
+        if (translationStr.isNotBlank() && !translationStr.startsWith("{")) {
+            val src = firstString(obj, listOf("source", "src", "original", "input", "query", "en", "text"))
+            return if (src != null) formatTranslation(src, translationStr)
+            else translationStr  // только чистый перевод, без JSON-обёртки
+        }
         val nested = obj.optJSONObject("translation")
         if (nested != null) {
             phraseFromLangMap(nested)?.let { return it }
